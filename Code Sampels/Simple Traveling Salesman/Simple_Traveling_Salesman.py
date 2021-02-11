@@ -68,4 +68,4 @@ num_city = 25
 map_size = 300
 
 cityList = city_setup(cityList, num_city, map_size)
-geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, mapSize = map_size)
+geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, mapSize=map_size)

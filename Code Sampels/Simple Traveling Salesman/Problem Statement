@@ -1,0 +1,6 @@
+Problem Statement:
+“Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city and returns to the origin city?”
+
+Rules: 
+1. Each city needs to be visited exactly one time
+2. We must return to the starting city, so our total distance needs to be calculated accordingly

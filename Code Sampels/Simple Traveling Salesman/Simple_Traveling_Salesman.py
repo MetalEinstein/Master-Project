@@ -18,19 +18,19 @@ def city_setup(city_list, num, size):
     return cityList
 
 
-def city_connect(city_list, final_population, size):
+def city_connect(city_list, final_population, size, best_index):
     map_city = np.ones((size, size, 3), np.uint8)
     map_city.fill(255)
 
     # We plot the city's on the map and draw the most optimized route between them
     for i in range(0, len(city_list)):
         if i == len(city_list)-1:
-            city1_posx, city1_posy = final_population[0][i].x, final_population[0][i].y
-            city2_posx, city2_posy = final_population[0][0].x, final_population[0][0].y
+            city1_posx, city1_posy = final_population[best_index][i].x, final_population[best_index][i].y
+            city2_posx, city2_posy = final_population[best_index][0].x, final_population[best_index][0].y
 
         else:
-            city1_posx, city1_posy = final_population[0][i].x, final_population[0][i].y
-            city2_posx, city2_posy = final_population[0][i + 1].x, final_population[0][i + 1].y
+            city1_posx, city1_posy = final_population[best_index][i].x, final_population[best_index][i].y
+            city2_posx, city2_posy = final_population[best_index][i + 1].x, final_population[best_index][i + 1].y
 
         if i == 0:
             cv2.circle(map_city, (city1_posx, city1_posy), 3, 0, -1)  # Visualizing the position of city's on map
@@ -52,7 +52,8 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         progress.append(1 / rankRoutes(pop)[0][1])
         print("Current Distance: " + str(1 / rankRoutes(pop)[0][1]) + ",   ", "Generation: " + str(i))
 
-    map_connect = city_connect(population, pop, mapSize)
+    best_solution = rankRoutes(pop)[0][0]
+    map_connect = city_connect(population, pop, mapSize, best_solution)
     cv2.imshow("Connected Map", map_connect)
 
     plt.plot(progress)

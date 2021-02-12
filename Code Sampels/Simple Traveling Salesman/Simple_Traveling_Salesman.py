@@ -79,8 +79,9 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     plt.xlabel('Generation')
     
     print("--- %s seconds ---" % (time.time() - start_time))
-    plt.show()
     cv2.imshow("Connected Map", map_connect)
+    plt.show()
+    
     cv2.waitKey()
 
 cityList = []

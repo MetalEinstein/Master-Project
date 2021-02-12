@@ -42,15 +42,33 @@ def city_connect(city_list, final_population, size, best_index):
     return map_city
 
 
-def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, mapSize):
+def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, mapSize):
     pop = initialPopulation(popSize, population)
+    generation_diff = []
     progress = []
-    progress.append(1 / rankRoutes(pop)[0][1])  # TODO We only keep an eye on the first route, maybe take the mean instead?
+    progress.append(1 / rankRoutes(pop)[0][1])  # We track progress according to the best route
 
+    p_counter = 0
     for i in range(0, generations):
+        p_counter += 1
+
+        progress_past = 1 / rankRoutes(pop)[0][1]
         pop = nextGeneration(pop, eliteSize, mutationRate)
+        progress_future = 1 / rankRoutes(pop)[0][1]
+        generation_diff.append(abs(progress_past - progress_future))
+
         progress.append(1 / rankRoutes(pop)[0][1])
         print("Current Distance: " + str(1 / rankRoutes(pop)[0][1]) + ",   ", "Generation: " + str(i))
+
+        # We check the progress over a set number of generations. If progress = 0 we stop the algorithm
+        # Might be an alternative just to use breakpoint instead of iteration for a set number of generations
+        if p_counter == breakpoint:
+            p_counter = 0
+            total_diff = sum(generation_diff)
+            generation_diff.clear()
+
+            if total_diff == 0:
+                break
 
     best_solution = rankRoutes(pop)[0][0]
     map_connect = city_connect(population, pop, mapSize, best_solution)
@@ -68,4 +86,4 @@ num_city = 25
 map_size = 300
 
 cityList = city_setup(cityList, num_city, map_size)
-geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, mapSize=map_size)
+geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, breakpoint=10, mapSize=map_size)

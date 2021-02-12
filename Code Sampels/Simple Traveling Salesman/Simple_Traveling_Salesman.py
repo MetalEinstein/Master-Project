@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt, cv2
 from my_classes import City
 from my_functions import*
 from typing import*
+import time
 
 
 def city_setup(city_list, num, size):
@@ -85,5 +86,7 @@ cityList = []
 num_city = 25
 map_size = 300
 
+start_time = time.time()
 cityList = city_setup(cityList, num_city, map_size)
 geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, breakpoint=10, mapSize=map_size)
+print("--- %s seconds ---" % (time.time() - start_time))

@@ -73,14 +73,15 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
     best_solution = rankRoutes(pop)[0][0]
     map_connect = city_connect(population, pop, mapSize, best_solution)
-    cv2.imshow("Connected Map", map_connect)
 
     plt.plot(progress)
     plt.ylabel('Distance')
     plt.xlabel('Generation')
+    
+    print("--- %s seconds ---" % (time.time() - start_time))
     plt.show()
+    cv2.imshow("Connected Map", map_connect)
     cv2.waitKey()
-
 
 cityList = []
 num_city = 25
@@ -88,5 +89,6 @@ map_size = 300
 
 start_time = time.time()
 cityList = city_setup(cityList, num_city, map_size)
-geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, breakpoint=10, mapSize=map_size)
-print("--- %s seconds ---" % (time.time() - start_time))
+geneticAlgorithm(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=200, breakpoint=20, mapSize=map_size)
+
+

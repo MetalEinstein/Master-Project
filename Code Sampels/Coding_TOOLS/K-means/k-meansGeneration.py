@@ -1,6 +1,9 @@
 import cv2
 from sklearn.cluster import KMeans
 import random, numpy as np
+from matplotlib import pyplot as plt
+import kneed
+import math
 
 
 def generate_dataset(num_citys, map_size):
@@ -17,8 +20,29 @@ def generate_dataset(num_citys, map_size):
 
 
 def perform_k_means(data, num_salesmen):
-    km = KMeans(n_clusters=num_salesmen)
+    sse = []
+    k_rng = range(1, num_salesmen+1)
+
+    for k in k_rng:
+        km = KMeans(n_clusters=k)
+        km.fit(data)
+        sse.append(km.inertia_)
+
+    # TODO improve the estimation of the best number of K. Maybe through tracking the slope of the curve
+    """
+    for i in range(0, len(sse)-1):
+        m = 1-((sse[i+1]/sse[i])/1)
+        print(m)
+    """
+
+    kn = kneed.KneeLocator(k_rng, sse, curve='convex', direction='decreasing', interp_method='interp1d')
+    print("Best Estimated K: ", kn.elbow)
+    km = KMeans(n_clusters=kn.elbow)
     y_predicted = km.fit_predict(data)
+
+    plt.xlabel('K')
+    plt.ylabel('Sum of squared error')
+    plt.plot(k_rng, sse, 'bx-')
 
     return y_predicted
 
@@ -47,17 +71,14 @@ def get_groups(data, grouping, map_size):
     return map_city, initial_salesman
 
 
-NUMBER_OF_CITYS = 25
+NUMBER_OF_CITYS = 100
 MAP_SIZE = 300
-NUM_SALESMEN = 4
+NUM_SALESMEN = 10
 
 dataset = generate_dataset(NUMBER_OF_CITYS, MAP_SIZE)
 label = perform_k_means(dataset, NUM_SALESMEN)
 map, start_individual = get_groups(dataset, label, MAP_SIZE)
 
-
-for genomes in start_individual:
-    print(genomes)
-
 cv2.imshow("Map Layout", map)
+plt.show()
 cv2.waitKey()

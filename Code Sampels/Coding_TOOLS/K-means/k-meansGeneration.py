@@ -18,7 +18,7 @@ def generate_dataset(num_citys, map_size):
 
     return city_list
 
-
+# TODO problem occur when num_salesmen falls below 5 
 def perform_k_means(data, num_salesmen):
     sse = []
     k_rng = range(1, num_salesmen+1)

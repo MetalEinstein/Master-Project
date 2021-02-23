@@ -17,7 +17,7 @@ def taskGenerator(taskList: List[object], taskNum: int, mapSize: int):
 
 
 def createRoute(taskList):
-    temp_taskList = taskList
+    temp_taskList = random.sample(taskList, len(taskList))
     genome = []
 
     while len(temp_taskList) > 1:
@@ -27,6 +27,7 @@ def createRoute(taskList):
         # Remove the subset from the full task set and assign it to a genome/salesman
         gene = [temp_taskList.pop(random.randrange(len(temp_taskList))) for _ in range(subset_range)]
         genome.append(gene)
+
 
         # If a singe task is left insert it into a random genome in the salesman
         if len(temp_taskList) == 1:

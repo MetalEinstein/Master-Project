@@ -1,15 +1,17 @@
 from GA_Functions import *
 
 taskList = []
-TASK_NUMBER = 40
+TASK_NUMBER = 10
 MAP_SIZE = 300
+POP_SIZE = 10
 
 taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 home_city = taskList.pop(0)
 
-initial_pop = initialPopulation(40, taskList)
+initial_pop = initialPopulation(POP_SIZE, taskList)
 print("\n")
-print(len(initial_pop))
+print("Initial population: ", initial_pop)
+print("Length of population: ", len(initial_pop))
 
 # print("Home City: ", home_city)
 

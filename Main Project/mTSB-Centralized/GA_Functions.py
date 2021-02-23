@@ -23,6 +23,8 @@ def createRoute(taskList):
     while len(temp_taskList) > 1:
         # Select a random subset of tasks
         subset_range = int(random.random() * len(temp_taskList))
+        while subset_range == 0:
+            subset_range = int(random.random() * len(temp_taskList))
 
         # Remove the subset from the full task set and assign it to a genome/salesman
         gene = [temp_taskList.pop(random.randrange(len(temp_taskList))) for _ in range(subset_range)]

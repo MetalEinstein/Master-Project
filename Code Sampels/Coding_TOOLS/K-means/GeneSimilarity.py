@@ -1,4 +1,4 @@
-
+# TODO Compare a select number of unique pairs from the population to generate an overall similarity score 
 
 # Genomes to compare.
 genome1 = [1, 2, 3, 4, 5, 6, 7]
@@ -20,7 +20,7 @@ for i in range(len(genome1)):
             break
 
 print(f"Indexes at which a match between the two Genomes occurred: {match_list}")
-# We order the list in ascending order. If the indexes at which the matching numbers occurred appeared
+# We order the list in ascending order.
 match_list = sorted(match_list)
 print(f"Now ordered: {match_list}")
 

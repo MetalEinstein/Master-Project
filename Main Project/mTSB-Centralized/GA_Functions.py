@@ -48,3 +48,28 @@ def initialPopulation(popSize, taskList):
         population.append(createRoute(taskList))
 
     return population
+
+
+def routeDistance(population, homeCity):
+    pathDistance = []
+    for i in range(len(population)):
+        geneDistance = 0
+        individual = population[i]
+        for j in range(len(individual)):
+            gene = individual[j]
+            # Add home town to start and end of specific agent route
+            print("old", gene)
+            gene.insert(0, homeCity)
+            gene.append(homeCity)
+            print(gene)
+            for k in range(len(gene)):
+                fromCity = gene[k]
+                toCity = None
+                if k + 1 < len(gene):
+                    toCity = gene[k + 1]
+                else:
+                    # When we get to the last city in the list we add the distance from it back to the initial city
+                    toCity = gene[0]
+                geneDistance += fromCity.distance(toCity)
+        pathDistance.append(geneDistance)
+    return pathDistance

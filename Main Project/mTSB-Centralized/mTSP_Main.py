@@ -12,6 +12,9 @@ initial_pop = initialPopulation(POP_SIZE, taskList)
 print("\n")
 print("Initial population: ", initial_pop)
 print("Length of population: ", len(initial_pop))
+dist = routeDistance(initial_pop, home_city)
+print(dist)
+
 
 # print("Home City: ", home_city)
 

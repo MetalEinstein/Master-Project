@@ -1,4 +1,4 @@
-import random, time
+import random, time, operator
 from typing import *
 from GA_Classes import *
 
@@ -55,8 +55,10 @@ def rankRoutes(population,homeCity):
 
     # Will fill a dictionary with key-value pairs
     # Key = Population index, value = corresponding fitness score
-    # for i in range(0, len(population)):
-    #     fitnessResults[i] = Fitness(population[i]).routeFitness()
-    fitnessResults = Fitness(population, homeCity).routeFitness()
+    fitness = Fitness(population, homeCity).routeFitness()
+    for i in range(len(fitness)):
+        fitnessResults[i] = fitness[i]
 
-    return fitnessResults
+    # key = operator.itemgetter(1) -> Will create a sorted list according to the '1' element, 0 being the population index
+    # and 1 being the fitness score. Thus we sort it from highest to lowest score
+    return sorted(fitnessResults.items(), key = operator.itemgetter(1), reverse = True)  # Returns sorted list

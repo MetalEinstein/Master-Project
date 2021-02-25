@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import pandas as pd
 from typing import *
 
 
@@ -56,3 +57,29 @@ class Fitness:
 
         return fitnessList
 
+
+class Crossover:
+    def __init__(self, popRanked, eliteSize):
+        self.popRanked = popRanked
+        self.eliteSize = eliteSize
+
+    def selection(self):
+        selectionResults = []
+
+        # Assign probabilities to each individual in the population
+        df = pd.DataFrame(np.array(self.popRanked), columns=["Index", "Fitness"])
+        df['cum_sum'] = df.Fitness.cumsum()
+        df['cum_perc'] = 100 * df.cum_sum / df.Fitness.sum()
+
+        # Picks out the top individuals in the population for the mating-pool. Not chosen by probability
+        for i in range(0, self.eliteSize):
+            selectionResults.append(self.popRanked[i][0])  # Appends list with the index of the best individuals
+
+        # Fills out the remaining mating pool according to the probabilities assigned to each individual
+        for i in range(0, len(self.popRanked) - self.eliteSize):
+            pick = 100 * random.random()
+            for i in range(0, len(self.popRanked)):
+                if pick <= df.iat[i, 3]:
+                    selectionResults.append(self.popRanked[i][0])
+                    break
+        return selectionResults

@@ -63,7 +63,7 @@ def analysePOP(population):
     return salesmen_data, similarity_data
 
 
-def PopAnalytics(population):
+def PopAnalytics(population, method_used):
     salesmen_data, similarity_data = analysePOP(population)
 
     mean_salesmen = sum(salesmen_data) / len(salesmen_data)
@@ -75,16 +75,23 @@ def PopAnalytics(population):
     salesmen_variance = sum(temp_data) / (len(temp_data) - 1)
     salesmen_sigma = math.sqrt(salesmen_variance)
 
-    x = np.linspace(mean_salesmen - 3 * salesmen_sigma, mean_salesmen + 3 * salesmen_sigma, 100)
-    plt.plot(x, stats.norm.pdf(x, mean_salesmen, salesmen_sigma))
-    plt.show()
-
     temp_data_ = []
     for similaritys in similarity_data:
         temp_data_.append((similaritys - mean_similarity) ** 2)
     similarity_variance = sum(temp_data_) / (len(temp_data_) - 1)
     similarity_sigma = math.sqrt(similarity_variance)
 
-    x = np.linspace(mean_similarity - 3 * similarity_sigma, mean_similarity + 3 * similarity_sigma, 100)
-    plt.plot(x, stats.norm.pdf(x, mean_similarity, similarity_sigma))
+    x = np.linspace(mean_salesmen - 3 * salesmen_sigma, mean_salesmen + 3 * salesmen_sigma, 100)
+    x_ = np.linspace(mean_similarity - 3 * similarity_sigma, mean_similarity + 3 * similarity_sigma, 100)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    fig.suptitle(f'{method_used} Population Analytics')
+
+    ax1.plot(x, stats.norm.pdf(x, mean_salesmen, salesmen_sigma))
+    ax1.set_ylabel('Salesmen')
+
+    ax2.plot(x_, stats.norm.pdf(x_, mean_similarity, similarity_sigma))
+    ax2.set_ylabel('Similarity')
+
     plt.show()
+

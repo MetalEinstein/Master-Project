@@ -22,7 +22,7 @@ print("Fitness scores: ", rankedFitness)
 selection = Crossover(initial_pop, rankedFitness, ELITE_SIZE).matingPool()
 print("Selected individuals: ", selection)
 
-PopAnalytics(initial_pop)
+PopAnalytics(initial_pop, "Random")
 
 # print("Home City: ", home_city)
 

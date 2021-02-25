@@ -99,3 +99,32 @@ class Crossover:
             index = selectionResults[i]
             matingpool.append(self.population[index])
         return matingpool
+
+
+    def evolve(self):
+        newPopulation = []
+        elitismOffset = 0
+        matingpool = self.matingPool()
+
+        for i in range(self.eliteSize):
+            #print("New pop: ", matingpool)
+            newPopulation.append(matingpool[i])
+            matingpool.pop(0)
+            print("func new pop: ", matingpool)
+
+
+        for i in range(len(self.population) - len(newPopulation)):
+            #TODO we might want to be more picky with the parents. We could base it on probability
+            parent1 = random.sample(matingpool,1)
+            parent2 = random.sample(matingpool,1)
+            #child = crossover(parent1, parent2)
+            # print("parents1: ", parent1)
+            # print("parents2: ", parent2)
+        return newPopulation
+
+    # def function(self):
+    #     newPopulation = self.evolve()
+    #     for i in range(10):
+    #         print("New pop: ", newPopulation)
+    #
+    # #def crossover(self, parent1, parent2):

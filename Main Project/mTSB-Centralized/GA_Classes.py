@@ -45,7 +45,10 @@ class Fitness:
                         # When we get to the last city in the list we add the distance from it back to the initial city
                         toCity = gene[0]
                     geneDistance += fromCity.distance(toCity)
+                # Delete home city again, so we  don't end up with multiple home cities in a row
+                gene.pop(0)
             routeDistance.append(geneDistance)
+        print("route distance: ", routeDistance)
         return routeDistance
 
 

@@ -78,7 +78,7 @@ print("\n")
 #print("Length of population: ", len(initial_pop))
 rankedFitness = rankRoutes(initial_pop, home_city)
 print("Fitness scores: ", rankedFitness)
-selection = Crossover(rankedFitness, ELITE_SIZE).selection()
+selection = Crossover(initial_pop, rankedFitness, ELITE_SIZE).matingPool()
 print("Selected individuals: ", selection)
 
 

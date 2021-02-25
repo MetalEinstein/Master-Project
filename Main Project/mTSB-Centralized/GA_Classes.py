@@ -48,7 +48,6 @@ class Fitness:
                 # Delete home city again, so we  don't end up with multiple home cities in a row
                 gene.pop(0)
             routeDistance.append(geneDistance)
-        print("route distance: ", routeDistance)
         return routeDistance
 
 
@@ -62,10 +61,15 @@ class Fitness:
 
 
 class Crossover:
-    def __init__(self, popRanked, eliteSize):
+    def __init__(self, population, popRanked, eliteSize):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
+        self.population = population
 
+
+    # Creates a mating pool by assigning probabilities according to the individual fitness scores
+    # Better fitness score = Higher probability of being picked
+    # Also insures that the best individuals in the population carries on to the next
     def selection(self):
         selectionResults = []
 
@@ -86,3 +90,12 @@ class Crossover:
                     selectionResults.append(self.popRanked[i][0])
                     break
         return selectionResults
+
+    # Creates a list of the best suited routes
+    def matingPool(self):
+        matingpool = []
+        selectionResults = self.selection()
+        for i in range(0, len(selectionResults)):
+            index = selectionResults[i]
+            matingpool.append(self.population[index])
+        return matingpool

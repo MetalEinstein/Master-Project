@@ -1,3 +1,4 @@
+import random
 
 def breed():
     parent1_continuous = [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9, 0, 10]
@@ -63,8 +64,27 @@ def breed():
             considerations.append(points[0])
             considerations.append(points[-1])
 
-    # TODO select random number from consideration and find the endpoint of the fragment associated with it.
+    # The initial fragment is selected and added as the first fragment in the reconstruction list
+    initial_task = random.choice(considerations)
+    reconstructed = [frag for frag in fragment_list if initial_task in frag]
+    initial_endpoint = reconstructed[0][-1]
+
+    fragment_list.remove(reconstructed[0])
+    if len(reconstructed[0]) == 1:
+        considerations.remove(initial_endpoint)
+    else:
+        considerations.remove(initial_endpoint)
+        considerations.remove(reconstructed[0][0])
+
+
     # TODO Find out which task has the smallest distance to endpoint and connect the fragment containing the task
+    distance = 0
+    for f in range(len(fragment_list)-1):
+        if f == 0:
+            for tasks in considerations:
+                distance =
+
+
     # TODO If the endpoint of one fragments has the shortest distance to the endpoint of another, reverse and connect the other
     # TODO Remember to remove the task considerations after connecting their associated fragment
 
@@ -76,6 +96,9 @@ def breed():
     for elements in fragment_list:
         print(elements)
     print("\nPoints for Reconstruction: ", considerations)
+    print(initial_task)
+    print(reconstructed)
+
 
 
 

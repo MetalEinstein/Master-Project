@@ -71,28 +71,30 @@ def matingPool(population: List[List[object]], selectionResults: List[int]) -> L
 
 # Takes in two individuals and mates them using ordered crossover resulting in a new route
 def breed(parent1: List[object], parent2: List[object]) -> List[object]:
-    parent1_continuous = parent1
-    parent2_continuous = parent2
+
+    if parent1 == parent2:
+        return parent1
+
+    print("Parent 1: ", parent1)
+    print("Parent 2: ", parent2)
+
 
     # --- CROSSOVER OPERATOR (DPX) ---
-    child1 = []
+    child = []
     match_list = []
     fragment = []
     fragment_list = []
-    remainder = []
     considerations = []
-
-    # Keeping track of the breakpoints for both parents
-    p1_breakpoints = [i for i in range(len(parent1_continuous)) if parent1_continuous[i] == 0]
-    p2_breakpoints = [i for i in range(len(parent2_continuous)) if parent2_continuous[i] == 0]
 
     # Compare element i in gene 1 with all elements in gene 2
     # If element i in gene1 is found in gene 2 return the index at which the match occurred
-    for i in range(len(parent1_continuous)):
-        for k in range(len(parent2_continuous)):
-            if parent1_continuous[i] == parent2_continuous[k] and parent1_continuous[i] != 0:
+    for i in range(len(parent1)):
+        for k in range(len(parent2)):
+            if parent1[i] == parent2[k] and parent1[i] != 0:
                 match_list.append(k)
                 break
+
+    print("Match List: ", match_list)
 
     # Check if the matches occurred in sequence and if they did add them as a fragment
     former_match = False
@@ -100,19 +102,21 @@ def breed(parent1: List[object], parent2: List[object]) -> List[object]:
         if i < len(match_list) - 1:
             if match_list[i + 1] == match_list[i] + 1 or match_list[i + 1] == match_list[i] - 1:
                 former_match = True
-                fragment.append(parent2_continuous[match_list[i]])
+                fragment.append(parent2[match_list[i]])
 
             else:
                 if former_match:
-                    fragment.append(parent2_continuous[match_list[i]])
+                    fragment.append(parent2[match_list[i]])
                     fragment.append(0)
                     former_match = False
         else:
             if former_match:
-                fragment.append(parent2_continuous[match_list[i]])
+                fragment.append(parent2[match_list[i]])
 
+    print("\nFragments: ", fragment)
     # Find the tasks that are not part of a common sequence in both parents
-    remainder = [task for task in parent2_continuous if task not in fragment]
+    remainder = [task for task in parent2 if task not in fragment]
+    print("Remainder: ", remainder)
 
     # Order the fragments in a nested list for reconstruction
     sub_list = []
@@ -125,6 +129,8 @@ def breed(parent1: List[object], parent2: List[object]) -> List[object]:
 
     for sub_fragment in remainder:
         fragment_list.append([sub_fragment])
+
+    print("\nFragment List: ", fragment_list)
 
     # Points to consider for greedy reconstruction
     for points in fragment_list:
@@ -146,15 +152,76 @@ def breed(parent1: List[object], parent2: List[object]) -> List[object]:
         considerations.remove(initial_endpoint)
         considerations.remove(reconstructed[0][0])
 
-    # TODO Find out which task has the smallest distance to endpoint and connect the fragment containing the task
-    distance = 0
-    for f in range(len(fragment_list) - 1):
-        if f == 0:
-            for tasks in considerations:
-                distance =
+    distance_list = []
+    task_index_endpoint = parent1.index(initial_endpoint)
 
-    # TODO If the endpoint of one fragments has the shortest distance to the endpoint of another, reverse and connect the other
-    # TODO Remember to remove the task considerations after connecting their associated fragment
+    while len(fragment_list) != 0:
+        i = 0
+        if i == 0:
+            # Calculate the distance between initial endpoint and all other end and startpoints among considerations
+            for tasks in considerations:
+                parent_index_nextpoint = parent1.index(tasks)
+                distance_list.append(parent1[task_index_endpoint].distance(parent1[parent_index_nextpoint]))
+            min_index = distance_list.index(min(distance_list))
+            distance_list = []
+            next_fragment = [frag for frag in fragment_list if considerations[min_index] in frag]
+            next_fragment = next_fragment[0]
+
+            # If the lowest distance is to a fragment startpoint, add associated fragment directly to reconstruction
+            # Else reverse and add it
+            if next_fragment[0] == considerations[min_index]:
+                reconstructed.append(next_fragment)
+            else:
+                end = next_fragment[-1]
+                start = next_fragment[0]
+                next_fragment[0] = end
+                next_fragment[-1] = start
+
+                reconstructed.append(next_fragment)
+
+            # Remove fragment and associated considerations
+            fragment_list.remove(next_fragment)
+            if len(next_fragment) == 1:
+                considerations.remove(next_fragment[0])
+            else:
+                considerations.remove(next_fragment[0])
+                considerations.remove(next_fragment[-1])
+            i = 1
+
+        else:
+            endpoint = parent1.index(reconstructed[-1][-1])
+            for tasks in considerations:
+                parent_index_nextpoint = parent1.index(tasks)
+                distance_list.append(parent1[endpoint].distance(parent1[parent_index_nextpoint]))
+            min_index = distance_list.index(min(distance_list))
+            distance_list = []
+            next_fragment = [frag for frag in fragment_list if considerations[min_index] in frag]
+            next_fragment = next_fragment[0]
+
+            # If the lowest distance is to a fragment startpoint, add associated fragment directly to reconstruction
+            # Else reverse and add it
+            if next_fragment[0] == considerations[min_index]:
+                reconstructed.append(next_fragment)
+            else:
+                end = next_fragment[-1]
+                start = next_fragment[0]
+                next_fragment[0] = end
+                next_fragment[-1] = start
+
+            # Remove fragment and associated considerations
+            fragment_list.remove(next_fragment)
+            if len(next_fragment) == 1:
+                considerations.remove(next_fragment[0])
+
+            else:
+                considerations.remove(next_fragment[0])
+                considerations.remove(next_fragment[-1])
+
+    for frags in reconstructed:
+        child.extend(frags)
+    print("\nChild: ", child)
+
+    return child
 
 
 # Breeds the individuals in our mating pool

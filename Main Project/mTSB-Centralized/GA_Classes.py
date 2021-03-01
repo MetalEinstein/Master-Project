@@ -61,10 +61,11 @@ class Fitness:
 
 
 class Crossover:
-    def __init__(self, population, popRanked, eliteSize):
+    def __init__(self, population, popRanked, eliteSize, mutation_rate):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
         self.population = population
+        self.mutation_rate = mutation_rate
 
 
     # Creates a mating pool by assigning probabilities according to the individual fitness scores
@@ -103,28 +104,77 @@ class Crossover:
 
     def evolve(self):
         newPopulation = []
-        elitismOffset = 0
         matingpool = self.matingPool()
 
         for i in range(self.eliteSize):
             #print("New pop: ", matingpool)
             newPopulation.append(matingpool[i])
-            matingpool.pop(0)
-            print("func new pop: ", matingpool)
+            # matingpool.pop(0)
+            # print("func new pop: ", matingpool)
 
+        eliteOffset = len(self.population) - len(newPopulation)
 
-        for i in range(len(self.population) - len(newPopulation)):
+        for i in range(eliteOffset):
             #TODO we might want to be more picky with the parents. We could base it on probability
             parent1 = random.sample(matingpool,1)
             parent2 = random.sample(matingpool,1)
-            #child = crossover(parent1, parent2)
-            # print("parents1: ", parent1)
-            # print("parents2: ", parent2)
+            #newPopulation = self.crossover(parent1, parent2)
+            print("newpopulation: ", newPopulation)
+            #TODO change to output of crossover, when that function is working
+            newPopulation = self.mutation(self.population)
+            print("new population 1: ", newPopulation)
         return newPopulation
 
-    # def function(self):
-    #     newPopulation = self.evolve()
-    #     for i in range(10):
-    #         print("New pop: ", newPopulation)
-    #
-    # #def crossover(self, parent1, parent2):
+
+    def crossover(self, parent1, parent2):
+        switchProb = random.random()
+        for i in range(len(parent1)):
+            print("i: ", len(parent1))
+            #if switchProb >= 0.5:
+
+    #TODO Make a mutation class instead, since there are going to be multiple mutations
+    def mutation(self, population):
+        newPopulation = []
+        mutateProb = random.random()
+        for i in range(len(population)):
+            individual = population[i]
+            # Check if individual_i will get this mutation
+            # Mutation 1 (switch two genes)
+            if mutateProb <= self.mutation_rate:
+                print("Mutating")
+                # Flatten list, since we need 1d list. Append 0 where original split was
+                flatIndividual = self.flatten(individual)
+                # Generate two genes to be switched
+                gene1, gene2 = random.sample(flatIndividual, 2)
+                # Switch genes
+                a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
+                flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
+                # Split list into lists by splitter value 0, so we get original list structure
+                size = len(flatIndividual)
+                idx_list = [idx + 1 for idx, val in
+                            enumerate(flatIndividual) if val == 0]
+                newIndividual = [flatIndividual[i: j] for i, j in
+                       zip([0] + idx_list, idx_list +
+                           ([size] if idx_list[-1] != size else []))]
+                # Remove appended 0 from list, since it is no longer needed
+                for item in newIndividual:
+                    try:
+                        item.remove(0)
+                    except ValueError:
+                        pass
+                newPopulation.append(newIndividual)
+            else:
+                newPopulation.append(individual)
+        return newPopulation
+
+
+    def flatten(self, individual):
+        newIndividual = []
+        for sublist in individual:
+            for subsublist in sublist:
+                newIndividual.append(subsublist)
+            newIndividual.append(0)  # To save the split locations
+        return newIndividual
+
+
+

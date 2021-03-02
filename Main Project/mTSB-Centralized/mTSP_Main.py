@@ -9,9 +9,9 @@ TASK_NUMBER = 10
 MAP_SIZE = 300
 POP_SIZE = 10
 ELITE_SIZE = 2
-MUTATION_RATE = 0.02
+MUTATION_RATE = 0.2
 
-#random.seed(1)
+random.seed(1)
 
 taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 home_city = taskList.pop(0)

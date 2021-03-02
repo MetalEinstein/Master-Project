@@ -64,9 +64,9 @@ def rankRoutes(population, homeCity):
 
 
 def evolvePopulation(population, popRanked, eliteSize, mutationRate):
-    # newPopulation = Crossover(population, popRanked, eliteSize).evolve()
+    #newPopulation = Crossover(population, popRanked, eliteSize).evolve()
     # TODO make a mutation check here, so we don't initiate function unless we have to. Might give faster execution
     # TODO: input population should be the one coming from the crossover function
-    newPopulation = Mutation(population, mutationRate).swap()
+    newPopulation = Mutation(population, mutationRate).mutate()
 
     return newPopulation

@@ -130,45 +130,89 @@ class Mutation:
         self.mutationRate = mutation_rate
         self.population = population
 
-    def swap(self):
-        newPopulation = []
+    def mutate(self):
+        newPopulation = [0] * len(self.population)
+        print(newPopulation)
+
         for i in range(len(self.population)):
             individual = self.population[i]
             mutateProb = random.random()
-            # print("Mutation probability: ", mutateProb)
+            print("Mutation probability: ", mutateProb)
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
             if mutateProb <= self.mutationRate:
                 print("Mutating individual", i, "-------------------------------------------")
-                # Flatten list, since we need 1d list. Append 0 where original split was
-                flatIndividual = self.flatten(individual)
-                # Generate two genes to be switched
-                gene1, gene2 = random.sample(flatIndividual, 2)
-                # Switch genes
-                a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
-                flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
-                # Split list into lists by splitter value 0, so we get original list structure
-                size = len(flatIndividual)
-                idx_list = [idx + 1 for idx, val in
-                            enumerate(flatIndividual) if val == 0]
-                newIndividual = [flatIndividual[i: j] for i, j in
-                       zip([0] + idx_list, idx_list +
-                           ([size] if idx_list[-1] != size else []))]
-                # Remove appended 0 from list, since it is no longer needed
-                for item in newIndividual:
-                    try:
-                        item.remove(0)
-                    except ValueError:
-                        pass
-                newPopulation.append(newIndividual)
+                newIndividual = self.swap(individual)
+                newPopulation[i] = newIndividual
             else:
-                newPopulation.append(individual)
+                #newPopulation.append(individual)
+                newPopulation[i] = individual
+
+            # mutateProb = random.random()
+            # print("Mutation probability2: ", mutateProb)
+            # # Check if individual_i will get this mutation
+            # # Mutation 1 (switch two genes)
+            # if mutateProb <= self.mutationRate:
+            #     print("Mutating individual", i, "-------------------------------------------")
+            #     newIndividual = self.swap(individual)
+            #     newPopulation[i] = newIndividual
+            # else:
+            #     #newPopulation.append(individual)
+            #     newPopulation[i] = individual
+            print("Length of population", len(newPopulation))
+            print("New population: ", newPopulation)
+            print("\n")
         return newPopulation
 
+
+    def swap(self, individual):
+        # Flatten list, since we need 1d list. Append 0 where original split was
+        flatIndividual = self.flatten(individual)
+        print("Flat individual: ", flatIndividual)
+        # Generate two genes to be switched
+        gene1, gene2 = random.sample(flatIndividual, 2)
+        print("Genes: ", gene1, gene2)
+        # Switch genes
+        a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
+        flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
+
+        newIndividual = self.unflatten(flatIndividual)
+        return newIndividual
+
+    # TODO: This seems kinda messy. Find better/faster way of doing this.
+    # Transform into a 1d list
     def flatten(self, individual):
         newIndividual = []
+        index = 0
         for sublist in individual:
             for item in sublist:
                 newIndividual.append(item)
-            newIndividual.append(0)  # To save the split locations
+            newIndividual.append(0+index)  # To save the split locations, transform into unique virtual cities
+            index += 1
+        return newIndividual
+
+    # TODO: This seems kinda messy. Find better/faster way of doing this.
+    # Remove appended virtual city from list, since it is no longer needed
+    def unflatten(self, flatIndividual):
+        index = 0
+        dex = 0
+        idx_list = []
+        # Split list into lists by splitter value 0, so we get original list structure
+        size = len(flatIndividual)
+        # TODO: Beautification. Find a way to do it with list comprehension
+        for idx, val in enumerate(flatIndividual):
+            if val == 0 + index:
+                idx_list.append(idx + 1)
+                index += 1
+        print("index list: ", idx_list)
+        newIndividual = [flatIndividual[i: j] for i, j in
+                         zip([0] + idx_list, idx_list +
+                             ([size] if idx_list[-1] != size else []))]
+        for item in newIndividual:
+            for element in item:
+                try:
+                    item.remove(0 + dex)
+                    dex += 1
+                except ValueError:
+                    pass
         return newIndividual

@@ -69,22 +69,9 @@ def matingPool(population: List[List[object]], selectionResults: List[int]) -> L
     return matingpool
 
 
-# Takes in two individuals and mates them using ordered crossover resulting in a new route
-def breed(parent1: List[object], parent2: List[object]) -> List[object]:
-
-    if parent1 == parent2:
-        return parent1
-
-    print("Parent 1: ", parent1)
-    print("Parent 2: ", parent2)
-
-
-    # --- CROSSOVER OPERATOR (DPX) ---
-    child = []
+def compare(parent1, parent2):
     match_list = []
     fragment = []
-    fragment_list = []
-    considerations = []
 
     # Compare element i in gene 1 with all elements in gene 2
     # If element i in gene1 is found in gene 2 return the index at which the match occurred
@@ -93,8 +80,6 @@ def breed(parent1: List[object], parent2: List[object]) -> List[object]:
             if parent1[i] == parent2[k] and parent1[i] != 0:
                 match_list.append(k)
                 break
-
-    print("Match List: ", match_list)
 
     # Check if the matches occurred in sequence and if they did add them as a fragment
     former_match = False
@@ -113,24 +98,43 @@ def breed(parent1: List[object], parent2: List[object]) -> List[object]:
             if former_match:
                 fragment.append(parent2[match_list[i]])
 
-    print("\nFragments: ", fragment)
     # Find the tasks that are not part of a common sequence in both parents
     remainder = [task for task in parent2 if task not in fragment]
-    print("Remainder: ", remainder)
 
+    return match_list, fragment, remainder
+
+
+def create_fragment(fragment, remainder):
     # Order the fragments in a nested list for reconstruction
     sub_list = []
-    for sub_fragment in fragment:
-        if sub_fragment != 0:
-            sub_list.append(sub_fragment)
-        else:
+    fragment_list = []
+    while len(fragment) > 0:
+        if 0 in fragment:
+            sub_list = fragment[0:fragment.index(0)]
             fragment_list.append(sub_list)
-            sub_list = []
+            del fragment[0:fragment.index(0) + 1]
+        else:
+            fragment_list.append(fragment)
+            fragment = []
 
     for sub_fragment in remainder:
         fragment_list.append([sub_fragment])
 
-    print("\nFragment List: ", fragment_list)
+    return fragment_list
+
+
+# Takes in two individuals and mates them using ordered crossover resulting in a new route
+def breed(parent1: List[object], parent2: List[object]) -> List[object]:
+
+    if parent1 == parent2:
+        return parent1
+
+    # --- CROSSOVER OPERATOR (DPX) ---
+    child = []
+    considerations = []
+
+    match_list, fragment, remainder = compare(parent1, parent2)
+    fragment_list = create_fragment(fragment, remainder)
 
     # Points to consider for greedy reconstruction
     for points in fragment_list:
@@ -219,7 +223,6 @@ def breed(parent1: List[object], parent2: List[object]) -> List[object]:
 
     for frags in reconstructed:
         child.extend(frags)
-    print("\nChild: ", child)
 
     return child
 

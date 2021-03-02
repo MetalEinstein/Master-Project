@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt, cv2
 from my_classes import City
 from my_functions import *
+import random
 from typing import *
 import time
 

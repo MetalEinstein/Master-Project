@@ -99,6 +99,161 @@ class Crossover:
             matingpool.append(self.population[index])
         return matingpool
 
+    def compare(self, parent1, parent2):
+        match_list = []
+        fragment = []
+
+        # Compare element i in gene 1 with all elements in gene 2
+        # If element i in gene1 is found in gene 2 return the index at which the match occurred
+        for i in range(len(parent1)):
+            for k in range(len(parent2)):
+                if parent1[i] == parent2[k] and parent1[i] != 0:
+                    match_list.append(k)
+                    break
+
+        # Check if the matches occurred in sequence and if they did add them as a fragment
+        former_match = False
+        for i in range(len(match_list)):
+            if i < len(match_list) - 1:
+                if match_list[i + 1] == match_list[i] + 1 or match_list[i + 1] == match_list[i] - 1:
+                    former_match = True
+                    fragment.append(parent2[match_list[i]])
+
+                else:
+                    if former_match:
+                        fragment.append(parent2[match_list[i]])
+                        fragment.append(0)
+                        former_match = False
+            else:
+                if former_match:
+                    fragment.append(parent2[match_list[i]])
+
+        # Find the tasks that are not part of a common sequence in both parents
+        remainder = [task for task in parent2 if task not in fragment]
+
+        return match_list, fragment, remainder
+
+    def create_fragment(self, fragment, remainder):
+        # Order the fragments in a nested list for reconstruction
+        sub_list = []
+        fragment_list = []
+        while len(fragment) > 0:
+            if 0 in fragment:
+                sub_list = fragment[0:fragment.index(0)]
+                fragment_list.append(sub_list)
+                del fragment[0:fragment.index(0) + 1]
+            else:
+                fragment_list.append(fragment)
+                fragment = []
+
+        for sub_fragment in remainder:
+            fragment_list.append([sub_fragment])
+
+        return fragment_list
+
+    # Takes in two individuals and mates them using ordered crossover resulting in a new route
+    def crossover(self, parent1: List[object], parent2: List[object]) -> List[object]:
+
+        if parent1 == parent2:
+            return parent1
+
+        # --- CROSSOVER OPERATOR (DPX) ---
+        child = []
+        considerations = []
+
+        match_list, fragment, remainder = self.compare(parent1, parent2)
+        fragment_list = self.create_fragment(fragment, remainder)
+
+        # Points to consider for greedy reconstruction
+        for points in fragment_list:
+            if len(points) == 1:
+                considerations.append(points[0])
+            else:
+                considerations.append(points[0])
+                considerations.append(points[-1])
+
+        # The initial fragment is selected and added as the first fragment in the reconstruction list
+        initial_task = random.choice(considerations)
+        reconstructed = [frag for frag in fragment_list if initial_task in frag]
+        initial_endpoint = reconstructed[0][-1]
+
+        fragment_list.remove(reconstructed[0])
+        if len(reconstructed[0]) == 1:
+            considerations.remove(initial_endpoint)
+        else:
+            considerations.remove(initial_endpoint)
+            considerations.remove(reconstructed[0][0])
+
+        distance_list = []
+        task_index_endpoint = parent1.index(initial_endpoint)
+
+        while len(fragment_list) != 0:
+            i = 0
+            if i == 0:
+                # Calculate the distance between initial endpoint and all other end and startpoints among considerations
+                for tasks in considerations:
+                    parent_index_nextpoint = parent1.index(tasks)
+                    distance_list.append(parent1[task_index_endpoint].distance(parent1[parent_index_nextpoint]))
+                min_index = distance_list.index(min(distance_list))
+                distance_list = []
+                next_fragment = [frag for frag in fragment_list if considerations[min_index] in frag]
+                next_fragment = next_fragment[0]
+
+                # If the lowest distance is to a fragment startpoint, add associated fragment directly to reconstruction
+                # Else reverse and add it
+                if next_fragment[0] == considerations[min_index]:
+                    reconstructed.append(next_fragment)
+                else:
+                    end = next_fragment[-1]
+                    start = next_fragment[0]
+                    next_fragment[0] = end
+                    next_fragment[-1] = start
+
+                    reconstructed.append(next_fragment)
+
+                # Remove fragment and associated considerations
+                fragment_list.remove(next_fragment)
+                if len(next_fragment) == 1:
+                    considerations.remove(next_fragment[0])
+                else:
+                    considerations.remove(next_fragment[0])
+                    considerations.remove(next_fragment[-1])
+                i = 1
+
+            else:
+                endpoint = parent1.index(reconstructed[-1][-1])
+                for tasks in considerations:
+                    parent_index_nextpoint = parent1.index(tasks)
+                    distance_list.append(parent1[endpoint].distance(parent1[parent_index_nextpoint]))
+                min_index = distance_list.index(min(distance_list))
+                distance_list = []
+                next_fragment = [frag for frag in fragment_list if considerations[min_index] in frag]
+                next_fragment = next_fragment[0]
+
+                # If the lowest distance is to a fragment startpoint, add associated fragment directly to reconstruction
+                # Else reverse and add it
+                if next_fragment[0] == considerations[min_index]:
+                    reconstructed.append(next_fragment)
+                else:
+                    end = next_fragment[-1]
+                    start = next_fragment[0]
+                    next_fragment[0] = end
+                    next_fragment[-1] = start
+
+                # Remove fragment and associated considerations
+                fragment_list.remove(next_fragment)
+                if len(next_fragment) == 1:
+                    considerations.remove(next_fragment[0])
+
+                else:
+                    considerations.remove(next_fragment[0])
+                    considerations.remove(next_fragment[-1])
+
+        for frags in reconstructed:
+            child.extend(frags)
+
+        return child
+
     def evolve(self):
         newPopulation = []
         matingpool = self.matingPool()

@@ -61,12 +61,10 @@ class Fitness:
 
 
 class Crossover:
-    def __init__(self, population, popRanked, eliteSize, mutation_rate):
+    def __init__(self, population, popRanked, eliteSize):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
         self.population = population
-        self.mutation_rate = mutation_rate
-
 
     # Creates a mating pool by assigning probabilities according to the individual fitness scores
     # Better fitness score = Higher probability of being picked
@@ -101,7 +99,6 @@ class Crossover:
             matingpool.append(self.population[index])
         return matingpool
 
-
     def evolve(self):
         newPopulation = []
         matingpool = self.matingPool()
@@ -112,36 +109,37 @@ class Crossover:
             # matingpool.pop(0)
             # print("func new pop: ", matingpool)
 
-        eliteOffset = len(self.population) - len(newPopulation)
-
-        for i in range(eliteOffset):
+        for i in range(len(self.population) - len(newPopulation)):
             #TODO we might want to be more picky with the parents. We could base it on probability
             parent1 = random.sample(matingpool,1)
             parent2 = random.sample(matingpool,1)
             #newPopulation = self.crossover(parent1, parent2)
-            print("newpopulation: ", newPopulation)
-            #TODO change to output of crossover, when that function is working
-            newPopulation = self.mutation(self.population)
-            print("new population 1: ", newPopulation)
         return newPopulation
 
+    # def crossover(self, parent1, parent2):
+    #     switchProb = random.random()
+    #     for i in range(len(parent1)):
+    #         print("i: ", len(parent1))
+    #         #if switchProb >= 0.5:
 
-    def crossover(self, parent1, parent2):
-        switchProb = random.random()
-        for i in range(len(parent1)):
-            print("i: ", len(parent1))
-            #if switchProb >= 0.5:
 
-    #TODO Make a mutation class instead, since there are going to be multiple mutations
-    def mutation(self, population):
+
+
+class Mutation:
+    def __init__(self, population, mutation_rate):
+        self.mutationRate = mutation_rate
+        self.population = population
+
+    def swap(self):
         newPopulation = []
-        mutateProb = random.random()
-        for i in range(len(population)):
-            individual = population[i]
+        for i in range(len(self.population)):
+            individual = self.population[i]
+            mutateProb = random.random()
+            # print("Mutation probability: ", mutateProb)
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
-            if mutateProb <= self.mutation_rate:
-                print("Mutating")
+            if mutateProb <= self.mutationRate:
+                print("Mutating individual", i, "-------------------------------------------")
                 # Flatten list, since we need 1d list. Append 0 where original split was
                 flatIndividual = self.flatten(individual)
                 # Generate two genes to be switched
@@ -167,14 +165,10 @@ class Crossover:
                 newPopulation.append(individual)
         return newPopulation
 
-
     def flatten(self, individual):
         newIndividual = []
         for sublist in individual:
-            for subsublist in sublist:
-                newIndividual.append(subsublist)
+            for item in sublist:
+                newIndividual.append(item)
             newIndividual.append(0)  # To save the split locations
         return newIndividual
-
-
-

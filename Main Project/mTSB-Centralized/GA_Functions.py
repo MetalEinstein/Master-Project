@@ -30,11 +30,10 @@ def createRoute(taskList):
         gene = [temp_taskList.pop(random.randrange(len(temp_taskList))) for _ in range(subset_range)]
         genome.append(gene)
 
-
         # If a singe task is left insert it into a random genome in the salesman
         if len(temp_taskList) == 1:
-            insert_rand_genome = int(random.random() * len(genome)-1)
-            insert_rand_index = int(random.random() * len(genome[insert_rand_genome])-1)
+            insert_rand_genome = int(random.random() * len(genome) - 1)
+            insert_rand_index = int(random.random() * len(genome[insert_rand_genome]) - 1)
 
             genome[insert_rand_genome].insert(insert_rand_index, temp_taskList.pop())
 
@@ -50,7 +49,7 @@ def initialPopulation(popSize, taskList):
     return population
 
 
-def rankRoutes(population,homeCity):
+def rankRoutes(population, homeCity):
     fitnessResults = {}
 
     # Will fill a dictionary with key-value pairs
@@ -61,4 +60,13 @@ def rankRoutes(population,homeCity):
 
     # key = operator.itemgetter(1) -> Will create a sorted list according to the '1' element, 0 being the population index
     # and 1 being the fitness score. Thus we sort it from highest to lowest score
-    return sorted(fitnessResults.items(), key = operator.itemgetter(1), reverse = True)  # Returns sorted list
+    return sorted(fitnessResults.items(), key=operator.itemgetter(1), reverse=True)  # Returns sorted list
+
+
+def evolvePopulation(population, popRanked, eliteSize, mutationRate):
+    # newPopulation = Crossover(population, popRanked, eliteSize).evolve()
+    # TODO make a mutation check here, so we don't initiate function unless we have to. Might give faster execution
+    # TODO: input population should be the one coming from the crossover function
+    newPopulation = Mutation(population, mutationRate).swap()
+
+    return newPopulation

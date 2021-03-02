@@ -259,25 +259,15 @@ class Crossover:
         matingpool = self.matingPool()
 
         for i in range(self.eliteSize):
-            #print("New pop: ", matingpool)
             newPopulation.append(matingpool[i])
-            # matingpool.pop(0)
-            # print("func new pop: ", matingpool)
 
         for i in range(len(self.population) - len(newPopulation)):
-            #TODO we might want to be more picky with the parents. We could base it on probability
+            # TODO we might want to be more picky with the parents. We could base it on probability
             parent1 = random.sample(matingpool,1)
             parent2 = random.sample(matingpool,1)
             #newPopulation = self.crossover(parent1, parent2)
+            newPopulation.append(self.crossover(parent1, parent2))
         return newPopulation
-
-    # def crossover(self, parent1, parent2):
-    #     switchProb = random.random()
-    #     for i in range(len(parent1)):
-    #         print("i: ", len(parent1))
-    #         #if switchProb >= 0.5:
-
-
 
 
 class Mutation:

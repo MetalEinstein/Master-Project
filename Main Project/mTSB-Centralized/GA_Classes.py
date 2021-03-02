@@ -99,6 +99,17 @@ class Crossover:
             matingpool.append(self.population[index])
         return matingpool
 
+    def continuous(self, individual):
+        continuous_indi = []
+        for g in range(len(individual)-1):
+            if g < len(individual)-1:
+                continuous_indi.extend(individual[g])
+                continuous_indi.append(0)
+            else:
+                break
+
+        return continuous_indi
+
     def compare(self, parent1, parent2):
         match_list = []
         fragment = []

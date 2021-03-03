@@ -32,8 +32,11 @@ class Fitness:
         for i in range(len(self.population)):
             geneDistance = 0
             individual = self.population[i]
+            # print("\n")
+            # print("individual: ", individual)
             for j in range(len(individual)):
                 gene = individual[j]
+                # print("gene: ", gene)
                 # Add home town to start of specific agent route
                 gene.insert(0, self.homeCity)
                 for k in range(len(gene)):
@@ -101,13 +104,12 @@ class Crossover:
 
     def continuous(self, individual):
         continuous_indi = []
-        for g in range(len(individual)-1):
-            if g < len(individual)-1:
+        for g in range(len(individual)):
+            if g < len(individual):
                 continuous_indi.extend(individual[g])
                 continuous_indi.append(0)
             else:
                 break
-
         return continuous_indi
 
     def compare(self, parent1, parent2):
@@ -140,8 +142,7 @@ class Crossover:
                     fragment.append(parent2[match_list[i]])
 
         # Find the tasks that are not part of a common sequence in both parents
-        remainder = [task for task in parent2 if task not in fragment]
-
+        remainder = [task for task in parent2 if task not in fragment and task != 0]
         return match_list, fragment, remainder
 
     def create_fragment(self, fragment, remainder):
@@ -159,18 +160,20 @@ class Crossover:
 
         for sub_fragment in remainder:
             fragment_list.append([sub_fragment])
-
         return fragment_list
 
     # Takes in two individuals and mates them using ordered crossover resulting in a new route
-    def crossover(self, parent1: List[object], parent2: List[object]) -> List[object]:
-
+    def crossover(self, parent1: List[object], parent2: List[object], p1, p2) -> List[object]:
         if parent1 == parent2:
-            return parent1
+            parent2 = parent1
 
         # --- CROSSOVER OPERATOR (DPX) ---
         child = []
         considerations = []
+
+        # Keeping track of the breakpoints for both parents
+        p1_breakpoints = [i for i in range(len(parent1)) if parent1[i] == 0]
+        p2_breakpoints = [i for i in range(len(parent2)) if parent2[i] == 0]
 
         match_list, fragment, remainder = self.compare(parent1, parent2)
         fragment_list = self.create_fragment(fragment, remainder)
@@ -263,7 +266,28 @@ class Crossover:
         for frags in reconstructed:
             child.extend(frags)
 
-        return child
+        if p1 < p2:
+            best_breakpoint = p1_breakpoints
+        else:
+            best_breakpoint = p2_breakpoints
+
+        # TODO implement the original breakpoints from the parent with the best fitness
+        for breakpoints in best_breakpoint:
+            child.insert(breakpoints, 0)
+
+        child_final = []
+        while len(child) > 0:
+            if 0 in child:
+                sub_list = child[0:child.index(0)]
+                child_final.append(sub_list)
+                for i in range(0, child.index(0)+1):
+                    child.pop(0)
+            else:
+                child_final.append(fragment)
+                child = []
+        #print("Final child: ", child_final)
+        return child_final
+
 
     def evolve(self):
         newPopulation = []
@@ -274,10 +298,13 @@ class Crossover:
 
         for i in range(len(self.population) - len(newPopulation)):
             # TODO we might want to be more picky with the parents. We could base it on probability
-            parent1 = random.sample(matingpool,1)
-            parent2 = random.sample(matingpool,1)
+            p1 = int(random.random()*len(matingpool)-1)
+            p2 = int(random.random()*len(matingpool)-1)
+            parent1 = self.continuous((matingpool[p1]))
+            parent2 = self.continuous((matingpool[p2]))
             #newPopulation = self.crossover(parent1, parent2)
-            newPopulation.append(self.crossover(parent1, parent2))
+
+            newPopulation.append(self.crossover(parent1, parent2, p1, p2))
         return newPopulation
 
 
@@ -288,16 +315,15 @@ class Mutation:
 
     def mutate(self):
         newPopulation = [0] * len(self.population)
-        print(newPopulation)
 
         for i in range(len(self.population)):
             individual = self.population[i]
             mutateProb = random.random()
-            print("Mutation probability: ", mutateProb)
+            # print("Mutation probability: ", mutateProb)
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
             if mutateProb <= self.mutationRate:
-                print("Mutating individual", i, "-------------------------------------------")
+                # print("Mutating individual", i, "-------------------------------------------")
                 newIndividual = self.swap(individual)
                 newPopulation[i] = newIndividual
             else:
@@ -315,19 +341,20 @@ class Mutation:
             # else:
             #     #newPopulation.append(individual)
             #     newPopulation[i] = individual
-            print("Length of population", len(newPopulation))
-            print("New population: ", newPopulation)
-            print("\n")
+            # print("Length of population", len(newPopulation))
+            # print("New population: ", newPopulation)
+            # print("\n")
         return newPopulation
 
 
     def swap(self, individual):
+        # print("Individual: ", individual)
         # Flatten list, since we need 1d list. Append 0 where original split was
         flatIndividual = self.flatten(individual)
-        print("Flat individual: ", flatIndividual)
+        # print("Flat individual: ", flatIndividual)
         # Generate two genes to be switched
         gene1, gene2 = random.sample(flatIndividual, 2)
-        print("Genes: ", gene1, gene2)
+        # print("Genes: ", gene1, gene2)
         # Switch genes
         a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
         flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
@@ -360,7 +387,6 @@ class Mutation:
             if val == 0 + index:
                 idx_list.append(idx + 1)
                 index += 1
-        print("index list: ", idx_list)
         newIndividual = [flatIndividual[i: j] for i, j in
                          zip([0] + idx_list, idx_list +
                              ([size] if idx_list[-1] != size else []))]

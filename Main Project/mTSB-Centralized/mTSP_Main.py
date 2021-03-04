@@ -2,20 +2,25 @@ from GA_Functions import *
 from Analytics import *
 import cv2
 import matplotlib.pyplot as plt
+import time
 
 
 
 taskList = []
-TASK_NUMBER = 20
-MAP_SIZE = 300
-POP_SIZE = 50
-ELITE_SIZE = 5
-MUTATION_RATE = 0.02
+TASK_NUMBER = 25
+MAP_SIZE = 500
+POP_SIZE = 80
+ELITE_SIZE = 10
+MUTATION_RATE = 0.2
+MAX_GENERATIONS = 500
+BREAKPOINT = 100
 
 
 #random.seed(1)
 
-taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
+#taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
+taskList = taskGeneratortesting(taskList)
+print(taskList)
 # home_city = taskList.pop(0)
 # initial_pop = initialPopulation(POP_SIZE, taskList)
 # print("\n")
@@ -26,11 +31,8 @@ taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 # evolvePopulation = evolvePopulation(initial_pop, rankedFitness, ELITE_SIZE, MUTATION_RATE)
 # print("Evolved Population: ", evolvePopulation)
 
-# (tasklist, POP_SIZE, ELITE_SIZE, MUTATION_RATE, DEF GENERATIONS, DEF BREAKPOINT)
-
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint):
     home_city = population.pop(0)
-    print(home_city)
     pop = initialPopulation(popSize, population)
     generation_diff = []
     progress = []
@@ -70,6 +72,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     print("agents: ")
     for agents in best_indi:
         print(agents)
+    print("--- %s seconds ---" % int((time.time() - start_time)))
     cv2.imshow("Connections", map_city)
     plt.plot(progress)
     plt.ylabel('Distance')
@@ -79,13 +82,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     cv2.waitKey()
 
 
-geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUTATION_RATE, generations=200, breakpoint=20)
+start_time = time.time()
+geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUTATION_RATE, generations=MAX_GENERATIONS, breakpoint=BREAKPOINT)
 
 #PopAnalytics(initial_pop, "Random")
-
-# print("Home City: ", home_city)
-
-"""
-for i in range(len(taskList)):
-    print(taskList[i].x)
-"""

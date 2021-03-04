@@ -18,6 +18,19 @@ def taskGenerator(taskList: List[object], taskNum: int, mapSize: int):
     return taskList
 
 
+def taskGeneratortesting(taskList: List[object]):
+    # We create a set number of city's each of which is positioned randomly
+    #list = [(67,423), (381,127), (247,224), (325,394), (46,14), (417,216), (381,1), (222,360), (114,472), (450,15), (12,270), (469,190), (108,211), (14,110), (218,247), (116,115), (109,229), (144,10), (418,278), (321,92), (496,429), (60,166), (360,355), (468,211), (415,335)]
+    cityx = [67, 381, 247, 325, 46, 417, 381, 222, 114, 450, 12, 469, 108, 14, 218, 116, 109, 144, 418, 321, 496, 60, 360, 468, 415]
+    cityy = [423, 127, 224, 394, 14, 216, 1, 360, 472, 15, 270, 190, 211, 110, 247, 115, 229, 10, 278, 92, 429, 166, 355, 211, 335]
+    for i in range(len(cityx)):
+        city_posx = cityx[i]
+        city_posy = cityy[i]
+        taskList.append(City(x=city_posx, y=city_posy))
+
+    return taskList
+
+
 def createRoute(taskList):
     temp_taskList = random.sample(taskList, len(taskList))
     genome = []

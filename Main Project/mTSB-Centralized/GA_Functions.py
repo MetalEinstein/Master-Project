@@ -82,7 +82,7 @@ def city_connect(final_population, size, best_index, home_city):
     # Add the home city to the task list of each salesmen
     best_individual = final_population[best_index]
     for genome_index in range(len(best_individual)):
-        best_individual[genome_index].append(home_city)
+        best_individual[genome_index].insert(0, home_city)
 
     # Generate unique colors for each salesman
     for i in range(0, len(best_individual)):

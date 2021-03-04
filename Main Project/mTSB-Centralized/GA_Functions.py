@@ -1,4 +1,6 @@
 import random, time, operator
+import numpy as np
+import cv2
 from typing import *
 from GA_Classes import *
 
@@ -70,3 +72,43 @@ def evolvePopulation(population, popRanked, eliteSize, mutationRate):
     newPopulation = Mutation(newCrossoverPopulation, mutationRate).mutate()
 
     return newPopulation
+
+
+def city_connect(final_population, size, best_index, home_city):
+    map_city = np.ones((size, size, 3), np.uint8)
+    map_city.fill(255)
+    color_dic = {}
+
+    # Add the home city to the task list of each salesmen
+    best_individual = final_population[best_index]
+    for genome_index in range(len(best_individual)):
+        best_individual[genome_index].append(home_city)
+
+    # Generate unique colors for each salesman
+    for i in range(0, len(best_individual)):
+        b_val = int(random.random() * 255)
+        g_val = int(random.random() * 255)
+        r_val = int(random.random() * 255)
+        color_dic[i] = (b_val, g_val, r_val)
+
+    # Draw the tasks and their connections on a map
+    for genomes in best_individual:
+        # We plot the city's on the map and draw the most optimized route between them
+        for i in range(0, len(genomes)):
+            if i == len(genomes) - 1:
+                city1_posx, city1_posy = genomes[i].x, genomes[i].y
+                city2_posx, city2_posy = genomes[0].x, genomes[0].y
+
+            else:
+                city1_posx, city1_posy = genomes[i].x, genomes[i].y
+                city2_posx, city2_posy = genomes[i + 1].x, genomes[i + 1].y
+
+            if i == 0:
+                cv2.circle(map_city, (city1_posx, city1_posy), 3, 0, -1)  # Visualizing the position of city's on map
+                cv2.line(map_city, (city1_posx, city1_posy), (city2_posx, city2_posy), color_dic[best_individual.index(genomes)], thickness=1, lineType=8)
+            else:
+                cv2.circle(map_city, (city1_posx, city1_posy), 3, (0, 0, 255),
+                           -1)  # Visualizing the position of city's on map
+                cv2.line(map_city, (city1_posx, city1_posy), (city2_posx, city2_posy), color_dic[best_individual.index(genomes)], thickness=1, lineType=8)
+
+    return map_city

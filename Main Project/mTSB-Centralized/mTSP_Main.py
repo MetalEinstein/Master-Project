@@ -1,6 +1,6 @@
 from GA_Functions import *
 from Analytics import *
-import random
+import cv2
 import matplotlib.pyplot as plt
 
 
@@ -11,6 +11,7 @@ MAP_SIZE = 300
 POP_SIZE = 50
 ELITE_SIZE = 5
 MUTATION_RATE = 0.02
+
 
 #random.seed(1)
 
@@ -61,16 +62,21 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
             if total_diff == 0:
                 break
+
     best_indi = rankedFitness[0][0]
+    map_city = city_connect(pop, MAP_SIZE, best_indi, home_city)
+
     best_indi = pop[best_indi]
     print("agents: ")
     for agents in best_indi:
         print(agents)
+    cv2.imshow("Connections", map_city)
     plt.plot(progress)
     plt.ylabel('Distance')
     plt.xlabel('Generation')
 
     plt.show()
+    cv2.waitKey()
 
 
 geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUTATION_RATE, generations=200, breakpoint=20)

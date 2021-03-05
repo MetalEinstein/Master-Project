@@ -5,8 +5,7 @@ def sequence_inversion(individual):
     # print("Previous Individual: ", individual)
 
     # Select a random genome from the individual to mutate
-    genome_list = [genomes for genomes in individual]
-    selected_genome = random.choice(genome_list)
+    selected_genome = random.choice(individual)
     genome_index = individual.index(selected_genome)
     # print("Selected Genome: ", selected_genome)
 
@@ -15,12 +14,10 @@ def sequence_inversion(individual):
     gene_b = int(random.random() * len(selected_genome))
     start_index = min(gene_a, gene_b)
     end_index = max(gene_a, gene_b)
-    # print(f"Selected Sequence: {start_index} -> {end_index}")
+    # print(f"Selected Sequence: {start_index} -> {end_index-1}")
 
-    # Take out the selected sequence out of the genome and invert it
-    gene_subset = []
-    for i in range(start_index, end_index):
-        gene_subset.append(selected_genome[i])
+    # Take out the selected sequence out of the genome and reverse it
+    gene_subset = selected_genome[start_index:end_index]
     # print("\nGene subset: ", gene_subset)
     gene_subset.reverse()
     # print("Reversed Gene subset: ", gene_subset)

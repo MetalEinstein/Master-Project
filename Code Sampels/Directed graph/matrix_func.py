@@ -32,19 +32,22 @@ def city_matrix(num):  # Makes a random adjancy matrix of city connections with 
         ys.append(cityList[i].y)
     for j in range(0, num):
         a = []
+        adj_list = []
         for index in range(0, num):
             if j == index: # Creates a diagonal zero line
                 a.append(int(0))
-            elif random.randint(0, 1) == 0:  # random generated zero connections
+            elif random.randint(0, 100) < 80:  # random generated connections
                 a.append(int(0))
             else:
                 x = xs[j] - xs[index]
                 y = ys[j] - ys[index]
                 distance = np.sqrt((x ** 2) + (y ** 2))  # calculates the distances
                 a.append(int(distance))
+                adj_list.append(index)  # makes a list of possible connections
                 cv2.circle(map_city, (xs[j], ys[j]), 3, 0, -1)  # Visualizing the position of city's on map
                 cv2.line(map_city, (xs[j], ys[j]), (xs[index], ys[index]), (255, 0, 0), thickness=1, lineType=8)
         matrixmap.append(a)
+        print(str(j), adj_list, sep=' -> ')
     print(np.matrix(matrixmap))
     cv2.imshow('Matrix City', map_city)
     cv2.waitKey()
@@ -54,7 +57,7 @@ def city_matrix(num):  # Makes a random adjancy matrix of city connections with 
 
 matrixmap = []
 cityList = []
-num_city = 25
+num_city = 15
 map_size = 500
 
 cityList = city_setup(cityList, num_city, map_size)

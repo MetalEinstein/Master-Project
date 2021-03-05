@@ -1,7 +1,7 @@
 import random
 
-Individual = [[(28,246), (153,250), (277,187), (67,143), (60,342)], [(252,263), (270,24), (490,127), (203,296), (111,49)], [(433,195), (391,466), (187,164), (490,30), (316,394)]]
-
+individual = [[(28,246), (153,250), (277,187), (67,143), (60,342)], [(252,263), (270,24), (490,127), (203,296), (111,49)], [(433,195), (391,466), (187,164), (490,30), (316,394)]]
+# individual = [[1, 2, 3, 4, 5, 6, 7], [8, 9], [10, 11, 12, 13, 14, 15]]
 def geneSwap(individual):
     # for some reason random.sample rearrange the order of the agents
     agent = random.sample(individual, len(individual))
@@ -15,12 +15,14 @@ def geneSwap(individual):
 
     individual[k] = genes
 
-    return Individual
+    return individual
 
-individual = []
-geneSwap(Individual)
+# individual = []
+
 
 def sequence_inversion(individual):
+    #TODO FIX code så den virker med det rigtige format - swapper kun to punkter i det rigtige format
+
     # print("Previous Individual: ", individual)
 
     # Select a random genome from the individual to mutate
@@ -48,8 +50,10 @@ def sequence_inversion(individual):
     # print("New Individual: ", individual)
 
     return individual
+print(individual)
+print(geneSwap(individual))
+print(sequence_inversion(individual))
 
 
-# individual = [[1, 2, 3, 4, 5, 6, 7], [8, 9], [10, 11, 12, 13, 14, 15]]
 # individual = sequence_inversion(individual)
 

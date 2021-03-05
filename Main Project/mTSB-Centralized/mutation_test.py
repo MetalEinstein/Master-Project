@@ -1,5 +1,24 @@
 import random
 
+Individual = [[(28,246), (153,250), (277,187), (67,143), (60,342)], [(252,263), (270,24), (490,127), (203,296), (111,49)], [(433,195), (391,466), (187,164), (490,30), (316,394)]]
+
+def geneSwap(individual):
+    # for some reason random.sample rearrange the order of the agents
+    agent = random.sample(individual, len(individual))
+    k = random.randint(0, len(agent)-1)  # k saves the random index number for later use
+
+    genes = [gene for gene in agent[k]]
+    gene1, gene2 = random.sample(genes, 2)
+
+    a, b = genes.index(gene1), genes.index(gene2)
+    genes[b], genes[a] = genes[a], genes[b]
+
+    individual[k] = genes
+
+    return Individual
+
+individual = []
+geneSwap(Individual)
 
 def sequence_inversion(individual):
     # print("Previous Individual: ", individual)

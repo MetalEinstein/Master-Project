@@ -25,7 +25,7 @@ def sequence_inversion(individual):
     gene_subset.reverse()
     # print("Reversed Gene subset: ", gene_subset)
 
-    # Insert the reversed gene subset into the selected gene and thereafter put it back into the individual
+    # Insert the reversed gene subset into the selected genome and thereafter put it back into the individual
     new_gene = [gene for gene in selected_genome if gene not in gene_subset]
     new_gene[start_index:start_index] = gene_subset
     individual[genome_index] = new_gene

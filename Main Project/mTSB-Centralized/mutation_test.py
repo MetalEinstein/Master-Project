@@ -6,7 +6,24 @@ individual = [[(28, 246), (153, 250), (277, 187), (67, 143), (60, 342)],
 
 
 # individual = [[1, 2, 3, 4, 5, 6, 7], [8, 9], [10, 11, 12, 13, 14, 15]]
-def geneSwap(individual):
+
+def insertion(individual):
+    #  k saves the random index number for later use
+    k = random.randint(0, len(individual) - 1)
+    #  Splits a random agent into genes and chooses randomly one
+    agent = [gene for gene in individual[k]]
+    gene = agent[random.randint(0, len(agent) - 1)]
+    #  The gene is then removed from the list
+    agent.pop(agent.index(gene))
+    #  insert(index, elem) places the gene randomly in the agent and push everything to the right
+    agent.insert(random.randint(0, len(agent) - 1), gene)
+    #  Inserts the new agent the same place it was taken from
+    individual[k] = agent
+
+    return individual
+
+
+def transposition(individual):
     #  k saves the random index number for later use
     k = random.randint(0, len(individual) - 1)
     #  Splits a random agent into genes and chooses randomly two
@@ -54,7 +71,8 @@ def sequence_inversion(individual):
 
 
 print(individual)
-print(geneSwap(individual))
+print(insertion(individual))
+print(transposition(individual))
 print(sequence_inversion(individual))
 
 # individual = sequence_inversion(individual)

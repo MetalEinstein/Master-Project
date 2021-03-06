@@ -1,27 +1,28 @@
 import random
 
-individual = [[(28,246), (153,250), (277,187), (67,143), (60,342)], [(252,263), (270,24), (490,127), (203,296), (111,49)], [(433,195), (391,466), (187,164), (490,30), (316,394)]]
+individual = [[(28, 246), (153, 250), (277, 187), (67, 143), (60, 342)],
+              [(252, 263), (270, 24), (490, 127), (203, 296), (111, 49)],
+              [(433, 195), (391, 466), (187, 164), (490, 30), (316, 394)]]
+
+
 # individual = [[1, 2, 3, 4, 5, 6, 7], [8, 9], [10, 11, 12, 13, 14, 15]]
 def geneSwap(individual):
-    # for some reason random.sample rearrange the order of the agents
-    agent = random.sample(individual, len(individual))
-    k = random.randint(0, len(agent)-1)  # k saves the random index number for later use
-
-    genes = [gene for gene in agent[k]]
+    #  k saves the random index number for later use
+    k = random.randint(0, len(individual) - 1)
+    #  Splits a random agent into genes and chooses randomly two
+    genes = [gene for gene in individual[k]]
     gene1, gene2 = random.sample(genes, 2)
-
+    #  Takes the index positions, to only swap the chosen genes
     a, b = genes.index(gene1), genes.index(gene2)
     genes[b], genes[a] = genes[a], genes[b]
-
+    #  Inserts the new agent the same place it was taken from
     individual[k] = genes
 
     return individual
 
-# individual = []
-
 
 def sequence_inversion(individual):
-    #TODO FIX code så den virker med det rigtige format - swapper kun to punkter i det rigtige format
+    # TODO FIX code så den virker med det rigtige format - swapper kun to punkter i det rigtige format
 
     # print("Previous Individual: ", individual)
 
@@ -50,10 +51,10 @@ def sequence_inversion(individual):
     # print("New Individual: ", individual)
 
     return individual
+
+
 print(individual)
 print(geneSwap(individual))
 print(sequence_inversion(individual))
 
-
 # individual = sequence_inversion(individual)
-

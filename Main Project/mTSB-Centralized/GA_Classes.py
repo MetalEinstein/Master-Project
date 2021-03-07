@@ -337,12 +337,14 @@ class Mutation:
 
                 newIndividual = self.sequence_inversion(newPopulation[i])
                 newPopulation[i] = newIndividual
+            # TODO: we might be able to leave the below two lines out. Too tired to test now
             else:
                 newPopulation[i] = newPopulation[i]
 
         return newPopulation
 
 
+# TODO: FIX. This function is broken.
     def swap(self, individual):
         print("Individual: ", individual)
         # Flatten list, since we need 1d list. Append 0 where original split was
@@ -355,7 +357,7 @@ class Mutation:
         # Switch genes
         a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
         flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
-
+# TODO: The error is in the unflatten function
         newIndividual = self.unflatten(flatIndividual)
         print("length individualafter: ", len(newIndividual))
         return newIndividual
@@ -398,6 +400,7 @@ class Mutation:
         return newIndividual
 
     # TODO: This seems kinda messy. Find better/faster way of doing this.
+    # TODO: FIX. sometimes doesn't remove the virtual cities.
     # Remove appended virtual city from list, since it is no longer needed
     def unflatten(self, flatIndividual):
         index = 0

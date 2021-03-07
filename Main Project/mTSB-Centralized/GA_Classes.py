@@ -309,8 +309,9 @@ class Crossover:
 
 
 class Mutation:
-    def __init__(self, population, mutation_rate):
-        self.mutationRate = mutation_rate
+    def __init__(self, population, mutation_rate, mutation_rate2):
+        self.mut_1 = mutation_rate
+        self.mut_2 = mutation_rate2
         self.population = population
 
     def mutate(self):
@@ -318,40 +319,36 @@ class Mutation:
 
         for i in range(len(self.population)):
             individual = self.population[i]
-            mutateProb = random.random()
-            # print("Mutation probability: ", mutateProb)
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
-            if mutateProb <= self.mutationRate:
-                # print("Mutating individual", i, "-------------------------------------------")
+            if random.random() <= self.mut_1:
+                print("\n")
+                print("Swapping individual", i, "-------------------------------------------")
                 newIndividual = self.swap(individual)
                 newPopulation[i] = newIndividual
             else:
-                #newPopulation.append(individual)
                 newPopulation[i] = individual
 
-            # mutateProb = random.random()
-            # print("Mutation probability2: ", mutateProb)
-            # # Check if individual_i will get this mutation
-            # # Mutation 1 (switch two genes)
-            # if mutateProb <= self.mutationRate:
-            #     print("Mutating individual", i, "-------------------------------------------")
-            #     newIndividual = self.swap(individual)
-            #     newPopulation[i] = newIndividual
-            # else:
-            #     #newPopulation.append(individual)
-            #     newPopulation[i] = individual
-            # print("Length of population", len(newPopulation))
-            # print("New population: ", newPopulation)
-            # print("\n")
+            # Check if individual_i will get this mutation
+            # Mutation 1 (switch two genes)
+            individual2 = newPopulation[i]
+            if random.random() <= self.mut_2:
+                print("Inverting individual", i, "-------------------------------------------")
+
+                newIndividual = self.sequence_inversion(newPopulation[i])
+                newPopulation[i] = newIndividual
+            else:
+                newPopulation[i] = newPopulation[i]
+
         return newPopulation
 
 
     def swap(self, individual):
-        # print("Individual: ", individual)
+        print("Individual: ", individual)
         # Flatten list, since we need 1d list. Append 0 where original split was
         flatIndividual = self.flatten(individual)
-        # print("Flat individual: ", flatIndividual)
+        print("length individual: ", len(flatIndividual))
+        print("Flat individual: ", flatIndividual)
         # Generate two genes to be switched
         gene1, gene2 = random.sample(flatIndividual, 2)
         # print("Genes: ", gene1, gene2)
@@ -360,7 +357,33 @@ class Mutation:
         flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
 
         newIndividual = self.unflatten(flatIndividual)
+        print("length individualafter: ", len(newIndividual))
         return newIndividual
+
+    def sequence_inversion(self, individual):
+        #  k saves the random index number for later use
+        k = random.randint(0, len(individual) - 1)
+        #  Splits a random agent into genes and chooses randomly two
+        agent = [gene for gene in individual[k]]
+        #  finds two random index points
+        # TODO: make it so it is not able to choose an agent with length of one
+        if(len(agent)>1):
+            print("check")
+            start_index = random.randint(0, len(agent) - 2)
+            end_index = random.randint(start_index, len(agent) - 1)
+
+            if start_index == end_index:
+                end_index = end_index + 1
+            # print(start_index, end_index)
+            # +1 is added as the end_index' gene is on the list
+            subset = agent[start_index:end_index + 1]
+            subset.reverse()
+            #  puts everything back together
+            agent[start_index:end_index + 1] = subset
+
+            individual[k] = agent
+
+        return individual
 
     # TODO: This seems kinda messy. Find better/faster way of doing this.
     # Transform into a 1d list

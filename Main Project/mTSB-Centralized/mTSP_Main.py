@@ -7,20 +7,21 @@ import time
 
 
 taskList = []
-TASK_NUMBER = 25
+TASK_NUMBER = 15
 MAP_SIZE = 500
-POP_SIZE = 80
+POP_SIZE = 50
 ELITE_SIZE = 10
-MUTATION_RATE = 0.2
+MUT_SWAP = 0.2
+MUT_INVERSION = 0.0
 MAX_GENERATIONS = 500
-BREAKPOINT = 100
+BREAKPOINT = 20
 
 
 #random.seed(1)
 
-#taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
-taskList = taskGeneratortesting(taskList)
-print(taskList)
+taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
+#taskList = taskGeneratortesting(taskList)
+#print(taskList)
 # home_city = taskList.pop(0)
 # initial_pop = initialPopulation(POP_SIZE, taskList)
 # print("\n")
@@ -31,7 +32,7 @@ print(taskList)
 # evolvePopulation = evolvePopulation(initial_pop, rankedFitness, ELITE_SIZE, MUTATION_RATE)
 # print("Evolved Population: ", evolvePopulation)
 
-def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint):
+def geneticAlgorithm(population, popSize, eliteSize, mutationRate, mutationRate2, generations, breakpoint):
     home_city = population.pop(0)
     pop = initialPopulation(popSize, population)
     generation_diff = []
@@ -46,7 +47,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         progress_past = 1 / rankRoutes(pop, home_city)[0][1]
         #pop = nextGeneration(pop, eliteSize, mutationRate)
         rankedFitness = rankRoutes(pop, home_city)
-        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate)
+        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, mutationRate2)
         progress_future = 1 / rankRoutes(pop, home_city)[0][1]
         generation_diff.append(abs(progress_past - progress_future))
         # print("ranked routes:", rankedFitness)
@@ -83,6 +84,6 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
 
 start_time = time.time()
-geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUTATION_RATE, generations=MAX_GENERATIONS, breakpoint=BREAKPOINT)
+geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_SWAP, mutationRate2=MUT_INVERSION, generations=MAX_GENERATIONS, breakpoint=BREAKPOINT)
 
 #PopAnalytics(initial_pop, "Random")

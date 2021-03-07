@@ -54,7 +54,7 @@ def city_matrix(num):  # Makes a random adjancy matrix of city connections with 
 
 matrixmap = []
 cityList = []
-num_city = 25
+num_city = 20
 map_size = 500
 
 cityList = city_setup(cityList, num_city, map_size)

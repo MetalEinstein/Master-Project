@@ -8,6 +8,11 @@ individual = [[(41, 461), (220, 215), (27, 149), (115, 32), (462, 293)],
               [(100, 141), (194, 84), (305, 333)],
               [(112, 307), (68, 366), (389, 296), (346, 303)]]
 
+individual2 = [[(41, 461), (220, 215), (27, 149), (115, 32), (462, 293)],
+              [(171, 217), (385, 64)],
+              [(100, 141), (194, 84), (305, 333)],
+              ]
+
 
 # individual = [[1, 2, 3, 4, 5, 6, 7], [8, 9], [10, 11, 12, 13, 14, 15]]
 
@@ -31,6 +36,34 @@ def chromosome_contraction(individual):
     # The main list is then updated and the smallest agent is deleted
     individual[second_agent] = genes2
     individual.pop(individual.index(agent[first_agent]))
+
+    return individual
+
+
+def chromosome_partition(individual):
+    print("\nPrevious Individual: ", individual)
+
+    # Select a genome from the individual at random
+    k = random.randint(0, len(individual) - 1)
+    print("Selected Genome: ", individual[k])
+
+    if len(individual[k]) > 1:
+        genome = individual.pop(k)
+
+        # Randomly choose a breakpoint for splitting the genome in two
+        partition_index = random.randint(1, len(genome) - 1)
+        print("Partition Index: ", partition_index)
+
+        # Split the chosen genome in two
+        new_genome1 = genome[0:partition_index]
+        new_genome2 = genome[partition_index:len(genome)]
+        print("\nNew Genomes:")
+        print(f"Genome 1: {new_genome1}")
+        print(f"Genome 2: {new_genome2}")
+
+        individual.append(new_genome1)
+        individual.append(new_genome2)
+        print("\nNew Individual: ", individual)
 
     return individual
 
@@ -105,3 +138,4 @@ def transposition(individual):
 #print(sequence_inversion(individual))
 #print(chromosome_contraction(individual))
 # individual = sequence_inversion(individual)
+chromosome_partition(individual2)

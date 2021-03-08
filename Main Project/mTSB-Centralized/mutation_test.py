@@ -84,27 +84,30 @@ def chromosome_contraction(individual):
 def chromosome_partition(individual):
     print("\nPrevious Individual: ", individual)
 
-    # Select a genome from the individual at random
+    # Select a genome from the individual at random and insure that the genome has at least two genes
     k = random.randint(0, len(individual) - 1)
+    while len(individual[k]) <= 1:
+        k = random.randint(0, len(individual) - 1)
     print("Selected Genome: ", individual[k])
 
-    if len(individual[k]) > 1:
-        genome = individual.pop(k)
+    # Take the genome out of the individual
+    genome = individual.pop(k)
 
-        # Randomly choose a breakpoint for splitting the genome in two
-        partition_index = random.randint(1, len(genome) - 1)
-        print("Partition Index: ", partition_index)
+    # Randomly choose a breakpoint for splitting the genome in two
+    partition_index = random.randint(1, len(genome) - 1)
+    print("Partition Index: ", partition_index)
 
-        # Split the chosen genome in two
-        new_genome1 = genome[0:partition_index]
-        new_genome2 = genome[partition_index:len(genome)]
-        print("\nNew Genomes:")
-        print(f"Genome 1: {new_genome1}")
-        print(f"Genome 2: {new_genome2}")
+    # Split the chosen genome in two
+    new_genome1 = genome[0:partition_index]
+    new_genome2 = genome[partition_index:len(genome)]
+    print("\nNew Genomes:")
+    print(f"Genome 1: {new_genome1}")
+    print(f"Genome 2: {new_genome2}")
 
-        individual.append(new_genome1)
-        individual.append(new_genome2)
-        print("\nNew Individual: ", individual)
+    # Reinsert the genomes back into the individual
+    individual.append(new_genome1)
+    individual.append(new_genome2)
+    print("\nNew Individual: ", individual)
 
     return individual
 

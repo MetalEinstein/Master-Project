@@ -36,32 +36,33 @@ def chromosome_contraction(individual):
 
 
 def sequence_inversion(individual):
-    print("\nPrevious Individual: ", individual)
+    # print("\nPrevious Individual: ", individual)
 
     # Select a genome from the individual at random
     k = random.randint(0, len(individual) - 1)
     genome = individual[k]
-    print("Selected Genome: ", individual[k])
+    # print("Selected Genome: ", individual[k])
 
-    # Randomly choose a start and end index to specify the gene sequence to be inverted
-    start_index = random.randint(0, len(genome) - 2)
-    end_index = random.randint(start_index, len(genome)-1)
-    print(f"Selected Sequence: {start_index} -> {end_index+1}")
+    if len(genome) > 1:
+        # Randomly choose a start and end index to specify the gene sequence to be inverted
+        start_index = random.randint(0, len(genome) - 2)
+        end_index = random.randint(start_index, len(genome) - 1)
+        # print(f"Selected Sequence: {start_index} -> {end_index + 1}")
 
-    # Insure that at least two genes are always being inverted
-    if start_index == end_index:
-       end_index += 1
+        # Insure that at least two genes are always being inverted
+        if start_index == end_index:
+            end_index += 1
 
-    # Take out the selected sequence and invert it
-    subset = genome[start_index:end_index + 1]
-    print("\nGene subset: ", subset)
-    subset.reverse()
-    print("Reversed Gene subset: ", subset)
+        # Take out the selected sequence and invert it
+        subset = genome[start_index:end_index + 1]
+        # print("\nGene subset: ", subset)
+        subset.reverse()
+        # print("Reversed Gene subset: ", subset)
 
-    # Reinsert the inverted gene sequence into the original genome and insert into the individual
-    genome[start_index:end_index + 1] = subset
-    individual[k] = genome
-    print("New Individual: ", individual)
+        # Reinsert the inverted gene sequence into the original genome and insert into the individual
+        genome[start_index:end_index + 1] = subset
+        individual[k] = genome
+        # print("New Individual: ", individual)
 
     return individual
 

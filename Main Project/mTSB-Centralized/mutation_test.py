@@ -10,8 +10,17 @@ individual = [[(41, 461), (220, 215), (27, 149), (115, 32), (462, 293)],
 
 individual2 = [[(41, 461), (220, 215), (27, 149), (115, 32), (462, 293)],
               [(171, 217), (385, 64)],
-              [(100, 141), (194, 84), (305, 333)],
-              ]
+              [(100, 141), (194, 84), (305, 333)]]
+
+def random_chromosome_contraction(individual):
+    # picks two random genomes
+    genome1, genome2 = random.sample(individual, 2)
+    # deletes the first genome from individual
+    individual.pop(individual.index(genome1))
+    # inserts the genes from list1 into list2
+    genome2.extend(genome1)
+
+    return individual
 
 def chromosome_partition_max(individual):
     listy = []
@@ -72,8 +81,9 @@ def chromosome_contraction(individual):
     genes = [genes for genes in agent[first_agent]]
     genes2 = [genes2 for genes2 in agent[second_agent]]
     # inserts each gene one by one from back of the first list to the start of the second list
-    for j in range(s_agent[first_agent]-1, -1, -1):
-        genes2.insert(0, genes[j])
+    genes2.extend(genes)
+    # for j in range(s_agent[first_agent]-1, -1, -1):
+    #     genes2.insert(0, genes[j])
     # The main list is then updated and the smallest agent is deleted
     individual[second_agent] = genes2
     individual.pop(individual.index(agent[first_agent]))
@@ -180,8 +190,9 @@ print(individual)
 # print(insertion(individual))
 # print(transposition(individual))
 # print(sequence_inversion(individual))
-# print(chromosome_contraction(individual))
-print(chromosome_partition_max(individual))
+print(chromosome_contraction(individual))
+# print(random_chromosome_contraction(individual))
+# print(chromosome_partition_max(individual))
 # print(partition_insertion(individual))
 # print(swap(individual))
 # print(chromosome_partition(individual2))

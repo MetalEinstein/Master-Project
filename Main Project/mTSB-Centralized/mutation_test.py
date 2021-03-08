@@ -35,27 +35,36 @@ def chromosome_contraction(individual):
     return individual
 
 
-def sequence_inversion2(individual):
-    #  k saves the random index number for later use
+def sequence_inversion(individual):
+    print("\nPrevious Individual: ", individual)
+
+    # Select a genome from the individual at random
     k = random.randint(0, len(individual) - 1)
-    #  Splits a random agent into genes and chooses randomly two
-    agent = [gene for gene in individual[k]]
-    #  finds two random index points
-    start_index = random.randint(0, len(agent) - 2)
-    end_index = random.randint(start_index, len(agent)-1)
+    genome = individual[k]
+    print("Selected Genome: ", individual[k])
 
+    # Randomly choose a start and end index to specify the gene sequence to be inverted
+    start_index = random.randint(0, len(genome) - 2)
+    end_index = random.randint(start_index, len(genome)-1)
+    print(f"Selected Sequence: {start_index} -> {end_index+1}")
+
+    # Insure that at least two genes are always being inverted
     if start_index == end_index:
-       end_index = end_index + 1
-    # print(gene_a, gene_b)
-    # +1 is added as the end_index' gene is on the list
-    subset = agent[start_index:end_index + 1]
-    subset.reverse()
-    #  puts everything back together
-    agent[start_index:end_index + 1] = subset
+       end_index += 1
 
-    individual[k] = agent
+    # Take out the selected sequence and invert it
+    subset = genome[start_index:end_index + 1]
+    print("\nGene subset: ", subset)
+    subset.reverse()
+    print("Reversed Gene subset: ", subset)
+
+    # Reinsert the inverted gene sequence into the original genome and insert into the individual
+    genome[start_index:end_index + 1] = subset
+    individual[k] = genome
+    print("New Individual: ", individual)
 
     return individual
+
 
 def insertion(individual):
     #  k saves the random index number for later use
@@ -88,42 +97,10 @@ def transposition(individual):
     return individual
 
 
-def sequence_inversion(individual):
-    # TODO FIX code så den virker med det rigtige format - swapper kun to punkter i det rigtige format
 
-    # print("Previous Individual: ", individual)
-
-    # Select a random genome from the individual to mutate
-    selected_genome = random.choice(individual)
-    genome_index = individual.index(selected_genome)
-    # print("Selected Genome: ", selected_genome)
-
-    # Select a random sequence from the genome to be inverted
-    gene_a = int(random.random() * len(selected_genome))
-    gene_b = int(random.random() * len(selected_genome))
-    start_index = min(gene_a, gene_b)
-    end_index = max(gene_a, gene_b)
-    # print(f"Selected Sequence: {start_index} -> {end_index-1}")
-
-    # Take out the selected sequence out of the genome and reverse it
-    gene_subset = selected_genome[start_index:end_index]
-    # print("\nGene subset: ", gene_subset)
-    gene_subset.reverse()
-    # print("Reversed Gene subset: ", gene_subset)
-
-    # Insert the reversed gene subset into the selected genome and thereafter put it back into the individual
-    new_gene = [gene for gene in selected_genome if gene not in gene_subset]
-    new_gene[start_index:start_index] = gene_subset
-    individual[genome_index] = new_gene
-    # print("New Individual: ", individual)
-
-    return individual
-
-
-print(individual)
+#print(individual)
 # print(insertion(individual))
 # print(transposition(individual))
-# print(sequence_inversion(individual))
-print(chromosome_contraction(individual))
-# print(sequence_inversion2(individual)) = very much indeed better
+#print(sequence_inversion(individual))
+#print(chromosome_contraction(individual))
 # individual = sequence_inversion(individual)

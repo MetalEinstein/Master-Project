@@ -13,8 +13,49 @@ individual2 = [[(41, 461), (220, 215), (27, 149), (115, 32), (462, 293)],
               [(100, 141), (194, 84), (305, 333)],
               ]
 
+def chromosome_partition_max(individual):
+    listy = []
+    for i in range(0, len(individual)):
+        listy.append(len(individual[i]))
 
-# individual = [[1, 2, 3, 4, 5, 6, 7], [8, 9], [10, 11, 12, 13, 14, 15]]
+    k = listy.index(max(listy))
+    m_genome = individual.pop(k)
+
+    partition_index = random.randint(1, len(m_genome) - 1)
+
+    # Split the chosen genome in two
+    new_genome1 = m_genome[0:partition_index]
+    new_genome2 = m_genome[partition_index:len(m_genome)]
+
+    individual.append(new_genome1)
+    individual.append(new_genome2)
+
+    return individual
+
+def partition_insertion(individual):
+    genome1, genome2 = random.sample(individual, 2)
+
+    start_index = random.randint(0, len(genome1) - 1)
+
+    gene = genome1[start_index]
+
+    genome1.pop(start_index)
+    genome2.insert(0, gene)
+
+    return individual
+
+def swap(individual):
+    genome1, genome2 = random.sample(individual, 2)
+
+    start_index = random.randint(0, len(genome1) - 1)
+    end_index = random.randint(0, len(genome2) - 1)
+
+    newgenome2 = genome2[end_index]
+
+    genome2[end_index] = genome1[start_index]
+    genome1[start_index] = newgenome2
+
+    return individual
 
 def chromosome_contraction(individual):
     agent = [agent for agent in individual]
@@ -132,10 +173,13 @@ def transposition(individual):
 
 
 
-#print(individual)
+print(individual)
 # print(insertion(individual))
 # print(transposition(individual))
-#print(sequence_inversion(individual))
-#print(chromosome_contraction(individual))
-# individual = sequence_inversion(individual)
-chromosome_partition(individual2)
+# print(sequence_inversion(individual))
+# print(chromosome_contraction(individual))
+print(chromosome_partition_max(individual))
+# print(partition_insertion(individual))
+# print(swap(individual))
+# print(chromosome_partition(individual2))
+

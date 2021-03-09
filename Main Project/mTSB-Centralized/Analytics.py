@@ -3,6 +3,8 @@ import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import math
+from itertools import permutations
+import time
 
 
 def similarity(population, pairs_to_compare, current_index):
@@ -38,7 +40,7 @@ def analysePOP(population):
     salesmen_data = []
     similarity_data = []
     pairs_to_compare = []
-    num_unique_pairs = int(len(population)*0.5)
+    num_unique_pairs = int(len(population) * 0.5)
 
     # We create a list containing the number of salesmen in each individual in the population
     for individuals in population:
@@ -46,8 +48,8 @@ def analysePOP(population):
 
     # We create a list containing a select number of unique pairs in the population to compare
     while len(similarity_data) != num_unique_pairs:
-        individual_one = int(random.random() * len(population)-1)
-        individual_two = int(random.random() * len(population)-1)
+        individual_one = int(random.random() * len(population) - 1)
+        individual_two = int(random.random() * len(population) - 1)
 
         comparing_pair = (individual_one, individual_two)
 
@@ -57,7 +59,7 @@ def analysePOP(population):
         else:
             pairs_to_compare.append(comparing_pair)
 
-        current_index = len(pairs_to_compare)-1
+        current_index = len(pairs_to_compare) - 1
         similarity_data.append(similarity(population, pairs_to_compare, current_index))
 
     return salesmen_data, similarity_data
@@ -95,3 +97,40 @@ def PopAnalytics(population, method_used):
 
     plt.show()
 
+
+def brute_force(taskList):
+    start = time.time()
+    min_length = calc_length(taskList, range(len(taskList)))
+    min_path = range(len(taskList))
+    print(range(len(taskList)))
+
+    for path in permutations(range(len(taskList))):
+        length = calc_length(taskList, path)
+        if length < min_length:
+            min_length = length
+            min_path = path
+            print("min_length: ", min_length)
+
+    print("min_path: ", min_path)
+    tottime = time.time() - start
+    print("Found path of length %s in %s seconds" % (round(min_length, 2), round(tottime, 2)))
+    return min_path
+
+
+def dist_squared(c1, c2):
+    t1 = c2[0] - c1[0]
+    t2 = c2[1] - c1[1]
+    return t1 ** 2 + t2 ** 2
+
+
+def calc_length(cities, path):
+    length = 0
+    for i in range(len(path)):
+        length += math.sqrt(dist_squared(cities[path[i - 1]], cities[path[i]]))
+    return length
+
+
+taskList = [(67,423), (381,127), (247,224), (325,394), (46,14), (417,216), (381,1), (222,360), (114,472), (450,15), (12,270), (469,190), (108,211), (14,110), (218,247), (116,115), (109,229), (144,10), (418,278), (321,92), (496,429), (60,166), (360,355), (468,211), (415,335)]
+#taskList = [(422,368), (430,268), (81,439), (444,412), (261,136), (357,235), (227,215), (291,12), (293,315), (369,32)]
+
+#brute_force(taskList)

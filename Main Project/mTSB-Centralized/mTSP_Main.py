@@ -7,20 +7,20 @@ import time
 
 
 taskList = []
-TASK_NUMBER = 15
+TASK_NUMBER = 25
 MAP_SIZE = 500
-POP_SIZE = 50
+POP_SIZE = 100
 ELITE_SIZE = 10
 MUT_SWAP = 0.2
-MUT_INVERSION = 0.0
+MUT_INVERSION = 0.2
 MAX_GENERATIONS = 500
-BREAKPOINT = 20
+BREAKPOINT = 50
 
 
 #random.seed(1)
 
-taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
-#taskList = taskGeneratortesting(taskList)
+#taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
+taskList = taskGeneratortesting(taskList)
 #print(taskList)
 # home_city = taskList.pop(0)
 # initial_pop = initialPopulation(POP_SIZE, taskList)

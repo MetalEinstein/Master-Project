@@ -2,6 +2,7 @@ import numpy as np
 import random
 import pandas as pd
 from typing import *
+from mutation_test import *
 
 
 class City:
@@ -315,52 +316,58 @@ class Mutation:
         self.population = population
 
     def mutate(self):
-        newPopulation = [0] * len(self.population)
+        newPopulation = [0] * (len(self.population))
 
         for i in range(len(self.population)):
             individual = self.population[i]
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
-            if random.random() <= self.mut_1:
-                print("\n")
-                print("Swapping individual", i, "-------------------------------------------")
-                newIndividual = self.swap(individual)
-                newPopulation[i] = newIndividual
+            if random.random() <= self.mut_1 and len(individual) > 1:
+                #print("\n")
+                #print("Parting individual", i, "-------------------------------------------")
+                newPopulation[i] = partition_insertion(individual)
             else:
                 newPopulation[i] = individual
 
+            # if random.random() <= self.mut_1:
+            #     #print("\n")
+            #     newIndividual = partition_insertion(individual)
+            #     newPopulation[i] = newIndividual
+            # else:
+            #     newPopulation[i] = individual
+
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
-            individual2 = newPopulation[i]
-            if random.random() <= self.mut_2:
-                print("Inverting individual", i, "-------------------------------------------")
+            # individual2 = newPopulation[i]
+            #print("Individual2: ", individual2)
+            #if random.random() <= self.mut_2:
+                #print("Inverting individual", i, "-------------------------------------------")
 
-                newIndividual = self.sequence_inversion(newPopulation[i])
-                newPopulation[i] = newIndividual
-            # TODO: we might be able to leave the below two lines out. Too tired to test now
-            else:
-                newPopulation[i] = newPopulation[i]
-
+                #newIndividual = self.sequence_inversion(individual2)
+                #newPopulation[i] = newIndividual
+                #newPopulation[i] = self.sequence_inversion(newPopulation[i])
+            # # TODO: we might be able to leave the below two lines out. Too tired to test now
+            # else:
+            #     newPopulation[i] = newPopulation[i]
+        # Insert the best individual from the original population
+        #newPopulation.insert(0, self.population[0])
         return newPopulation
 
 
-# TODO: FIX. This function is broken.
-    def swap(self, individual):
-        print("Individual: ", individual)
-        # Flatten list, since we need 1d list. Append 0 where original split was
-        flatIndividual = self.flatten(individual)
-        print("length individual: ", len(flatIndividual))
-        print("Flat individual: ", flatIndividual)
-        # Generate two genes to be switched
-        gene1, gene2 = random.sample(flatIndividual, 2)
-        # print("Genes: ", gene1, gene2)
-        # Switch genes
-        a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
-        flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
-# TODO: The error is in the unflatten function
-        newIndividual = self.unflatten(flatIndividual)
-        print("length individualafter: ", len(newIndividual))
-        return newIndividual
+    # def swap(self, individual):
+    #     print("individual: ", individual)
+    #     print("length: ", len(individual))
+    #     genome1, genome2 = random.sample(individual, 2)
+    #
+    #     start_index = random.randint(0, len(genome1) - 1)
+    #     end_index = random.randint(0, len(genome2) - 1)
+    #
+    #     newgenome2 = genome2[end_index]
+    #
+    #     genome2[end_index] = genome1[start_index]
+    #     genome1[start_index] = newgenome2
+    #
+    #     return individual
 
     def sequence_inversion(self, individual):
         # print("\nPrevious Individual: ", individual)
@@ -371,6 +378,7 @@ class Mutation:
         # print("Selected Genome: ", individual[k])
 
         if len(genome) > 1:
+            print("Inverting sequence ------------------------")
             # Randomly choose a start and end index to specify the gene sequence to be inverted
             start_index = random.randint(0, len(genome) - 2)
             end_index = random.randint(start_index, len(genome) - 1)
@@ -392,41 +400,3 @@ class Mutation:
             # print("New Individual: ", individual)
 
         return individual
-
-    # TODO: This seems kinda messy. Find better/faster way of doing this.
-    # Transform into a 1d list
-    def flatten(self, individual):
-        newIndividual = []
-        index = 0
-        for sublist in individual:
-            for item in sublist:
-                newIndividual.append(item)
-            newIndividual.append(0+index)  # To save the split locations, transform into unique virtual cities
-            index += 1
-        return newIndividual
-
-    # TODO: This seems kinda messy. Find better/faster way of doing this.
-    # TODO: FIX. sometimes doesn't remove the virtual cities.
-    # Remove appended virtual city from list, since it is no longer needed
-    def unflatten(self, flatIndividual):
-        index = 0
-        dex = 0
-        idx_list = []
-        # Split list into lists by splitter value 0, so we get original list structure
-        size = len(flatIndividual)
-        # TODO: Beautification. Find a way to do it with list comprehension
-        for idx, val in enumerate(flatIndividual):
-            if val == 0 + index:
-                idx_list.append(idx + 1)
-                index += 1
-        newIndividual = [flatIndividual[i: j] for i, j in
-                         zip([0] + idx_list, idx_list +
-                             ([size] if idx_list[-1] != size else []))]
-        for item in newIndividual:
-            for element in item:
-                try:
-                    item.remove(0 + dex)
-                    dex += 1
-                except ValueError:
-                    pass
-        return newIndividual

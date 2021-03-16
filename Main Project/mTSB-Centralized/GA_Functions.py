@@ -85,6 +85,7 @@ def evolvePopulation(population, popRanked, eliteSize, mutationRate, mutationRat
     newPopulation = Mutation(newCrossoverPopulation, mutationRate, mutationRate2).mutate()
 
     return newPopulation
+    #return newCrossoverPopulation
 
 
 def city_connect(final_population, size, best_index, home_city):

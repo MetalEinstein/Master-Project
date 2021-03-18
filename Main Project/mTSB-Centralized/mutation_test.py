@@ -72,7 +72,7 @@ def swap(individual):
     return individual
 
 def chromosome_contraction(individual):
-    if len(individual) > 2:
+    if len(individual) > 1:
         print("Contraction individual ----------------------")
         agent = [agent for agent in individual]
         s_agent = []
@@ -83,6 +83,7 @@ def chromosome_contraction(individual):
         sort_list = sorted(s_agent)
         first_agent = s_agent.index(sort_list[0])
         second_agent = s_agent.index(sort_list[1])
+        # Make sure first and second agents is different
         if first_agent == second_agent:
             second_agent += 1
         # unpacks each list

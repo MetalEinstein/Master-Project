@@ -9,11 +9,12 @@ import time
 taskList = []
 TASK_NUMBER = 25
 MAP_SIZE = 500
-POP_SIZE = 100
+POP_SIZE = 80
 ELITE_SIZE = 10
-MUT_SWAP = 0.2
-MUT_INVERSION = 0.2
-MAX_GENERATIONS = 500
+MUT_CONTRACTION = 0.05
+MUT_INVERSION = 0.05
+MUT_PARTITION = 0.05
+MAX_GENERATIONS = 400
 BREAKPOINT = 50
 
 
@@ -32,7 +33,7 @@ taskList = taskGeneratortesting(taskList)
 # evolvePopulation = evolvePopulation(initial_pop, rankedFitness, ELITE_SIZE, MUTATION_RATE)
 # print("Evolved Population: ", evolvePopulation)
 
-def geneticAlgorithm(population, popSize, eliteSize, mutationRate, mutationRate2, generations, breakpoint):
+def geneticAlgorithm(population, popSize, eliteSize, mutationRate, mutationRate2, mutationRate3, generations, breakpoint):
     home_city = population.pop(0)
     pop = initialPopulation(popSize, population)
     generation_diff = []
@@ -47,7 +48,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, mutationRate2
         progress_past = 1 / rankRoutes(pop, home_city)[0][1]
         #pop = nextGeneration(pop, eliteSize, mutationRate)
         rankedFitness = rankRoutes(pop, home_city)
-        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, mutationRate2)
+        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, mutationRate2, mutationRate3)
         progress_future = 1 / rankRoutes(pop, home_city)[0][1]
         generation_diff.append(abs(progress_past - progress_future))
         # print("ranked routes:", rankedFitness)
@@ -84,6 +85,6 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, mutationRate2
 
 
 start_time = time.time()
-geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_SWAP, mutationRate2=MUT_INVERSION, generations=MAX_GENERATIONS, breakpoint=BREAKPOINT)
+geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_PARTITION, mutationRate2=MUT_INVERSION, mutationRate3=MUT_CONTRACTION, generations=MAX_GENERATIONS, breakpoint=BREAKPOINT)
 
 #PopAnalytics(initial_pop, "Random")

@@ -78,11 +78,11 @@ def rankRoutes(population, homeCity):
     return sorted(fitnessResults.items(), key=operator.itemgetter(1), reverse=True)  # Returns sorted list
 
 
-def evolvePopulation(population, popRanked, eliteSize, mutationRate, mutationRate2):
+def evolvePopulation(population, popRanked, eliteSize, mutationRate, mutationRate2, mutationRate3):
     newCrossoverPopulation = Crossover(population, popRanked, eliteSize).evolve()
     # TODO make a mutation check here, so we don't initiate function unless we have to. Might give faster execution
     # TODO: input population should be the one coming from the crossover function
-    newPopulation = Mutation(newCrossoverPopulation, mutationRate, mutationRate2).mutate()
+    newPopulation = Mutation(newCrossoverPopulation, mutationRate, mutationRate2, mutationRate3).mutate()
 
     return newPopulation
     #return newCrossoverPopulation

@@ -310,9 +310,10 @@ class Crossover:
 
 
 class Mutation:
-    def __init__(self, population, mutation_rate, mutation_rate2):
+    def __init__(self, population, mutation_rate, mutation_rate2, mutation_rate3):
         self.mut_1 = mutation_rate
         self.mut_2 = mutation_rate2
+        self.mut_3 = mutation_rate3
         self.population = population
 
     def mutate(self):
@@ -322,52 +323,53 @@ class Mutation:
             individual = self.population[i]
             # Check if individual_i will get this mutation
             # Mutation 1 (switch two genes)
-            if random.random() <= self.mut_1 and len(individual) > 1:
-                #print("\n")
-                #print("Parting individual", i, "-------------------------------------------")
-                newPopulation[i] = partition_insertion(individual)
-            else:
-                newPopulation[i] = individual
-
-            # if random.random() <= self.mut_1:
+            # if random.random() <= self.mut_1 and len(individual) > 1:
             #     #print("\n")
-            #     newIndividual = partition_insertion(individual)
-            #     newPopulation[i] = newIndividual
+            #     #print("Parting individual", i, "-------------------------------------------")
+            #     newPopulation[i] = partition_insertion(individual)
             # else:
             #     newPopulation[i] = individual
 
-            # Check if individual_i will get this mutation
-            # Mutation 1 (switch two genes)
-            # individual2 = newPopulation[i]
-            #print("Individual2: ", individual2)
-            #if random.random() <= self.mut_2:
-                #print("Inverting individual", i, "-------------------------------------------")
+            if random.random() <= self.mut_3:
+                #print("\n")
+                #print("Contracting individual", i, "-------------------------------------------")
+                newPopulation[i] = transposition(individual)
+            else:
+                newPopulation[i] = individual
 
-                #newIndividual = self.sequence_inversion(individual2)
-                #newPopulation[i] = newIndividual
-                #newPopulation[i] = self.sequence_inversion(newPopulation[i])
-            # # TODO: we might be able to leave the below two lines out. Too tired to test now
-            # else:
-            #     newPopulation[i] = newPopulation[i]
+
+            # Check if individual_i will get this mutation
+            # Mutation 2
+            # if random.random() <= self.mut_1:
+            #     print("Parting individual", i, "-------------------------------------------")
+            #
+            #     # newIndividual = self.sequence_inversion(individual2)
+            #     # newPopulation[i] = newIndividual
+            #     newPopulation[i] = chromosome_partition(newPopulation[i])
+
+            if random.random() <= self.mut_2:
+                #print("Parting individual", i, "-------------------------------------------")
+
+                # newIndividual = self.sequence_inversion(individual2)
+                # newPopulation[i] = newIndividual
+                newPopulation[i] = self.sequence_inversion(newPopulation[i])
         # Insert the best individual from the original population
         #newPopulation.insert(0, self.population[0])
         return newPopulation
 
 
-    # def swap(self, individual):
-    #     print("individual: ", individual)
-    #     print("length: ", len(individual))
-    #     genome1, genome2 = random.sample(individual, 2)
-    #
-    #     start_index = random.randint(0, len(genome1) - 1)
-    #     end_index = random.randint(0, len(genome2) - 1)
-    #
-    #     newgenome2 = genome2[end_index]
-    #
-    #     genome2[end_index] = genome1[start_index]
-    #     genome1[start_index] = newgenome2
-    #
-    #     return individual
+    def swap(self, individual):
+        genome1, genome2 = random.sample(individual, 2)
+
+        start_index = random.randint(0, len(genome1) - 1)
+        end_index = random.randint(0, len(genome2) - 1)
+
+        newgenome2 = genome2[end_index]
+
+        genome2[end_index] = genome1[start_index]
+        genome1[start_index] = newgenome2
+
+        return individual
 
     def sequence_inversion(self, individual):
         # print("\nPrevious Individual: ", individual)

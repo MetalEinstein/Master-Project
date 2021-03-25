@@ -2,7 +2,6 @@ import numpy as np
 import random
 import pandas as pd
 from typing import *
-from mutation_test import *
 
 
 class City:
@@ -54,7 +53,6 @@ class Fitness:
             routeDistance.append(geneDistance)
         return routeDistance
 
-
     def routeFitness(self):
         fitnessList = [0] * len(self.routeDistance())
         for i in range(len(self.routeDistance())):
@@ -64,7 +62,7 @@ class Fitness:
         return fitnessList
 
 
-class Crossover:
+class Selection:
     def __init__(self, population, popRanked, eliteSize):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
@@ -73,7 +71,7 @@ class Crossover:
     # Creates a mating pool by assigning probabilities according to the individual fitness scores
     # Better fitness score = Higher probability of being picked
     # Also insures that the best individuals in the population carries on to the next
-    def selection(self):
+    def proportionate_selection(self):
         selectionResults = []
 
         # Assign probabilities to each individual in the population
@@ -94,14 +92,45 @@ class Crossover:
                     break
         return selectionResults
 
+    # Selects the best fitting individual in a selected subset of a chosen size
+    def tournament_selection(self):
+        selection_size = 6
+        selectionResults = []
+        selectionPool = random.sample(self.popRanked, len(self.popRanked))
+
+        # Add the elites directly to the mating pool
+        for i in range(0, self.eliteSize):
+            selectionResults.append(self.popRanked[i][0])
+
+        # Choose the remaining individuals to the mating pool through tournament selection
+        for i in range(0, len(self.popRanked) - self.eliteSize):
+            check_relative_to = random.randint(0, len(selectionPool) - 1 - selection_size)
+            temp_subPool = selectionPool[check_relative_to:check_relative_to + selection_size + 1]
+
+            max_index = temp_subPool[0][0]
+            last_fitness = temp_subPool[0][1]
+            for index, fitness in temp_subPool:
+                if last_fitness < fitness:
+                    max_index = index
+                last_fitness = fitness
+            selectionResults.append(max_index)
+
+        return selectionResults
+
     # Creates a list of the best suited routes
     def matingPool(self):
         matingpool = []
-        selectionResults = self.selection()
+        selectionResults = self.tournament_selection()
         for i in range(0, len(selectionResults)):
             index = selectionResults[i]
             matingpool.append(self.population[index])
         return matingpool
+
+
+class Crossover:
+    def __init__(self, matingPool, eliteSize):
+        self.matingPool = matingPool
+        self.eliteSize = eliteSize
 
     def continuous(self, individual):
         continuous_indi = []
@@ -287,7 +316,7 @@ class Crossover:
 
     def evolve(self):
         newPopulation = []
-        matingpool = self.matingPool()
+        matingpool = self.matingPool
         pool = random.sample(matingpool, len(matingpool))
         legth = len(matingpool) - self.eliteSize
 
@@ -312,10 +341,11 @@ class Mutation:
     def mutate(self):
         newPopulation = [0] * (len(self.population))
         newPopulation[0] = self.population[0]  # Store the best individual without change (The king)
-        mutation_types = {0: lambda x: self.sequence_inversion(x),
-                          1: lambda x: self.gene_transposition(x),
-                          2: lambda x: self.gene_insertion(x),
-                          3: lambda x: self.cross_gene_insertion(x)}
+        mutation_types = {0: lambda x: Mutation.sequence_inversion(x),
+                          1: lambda x: Mutation.gene_transposition(x),
+                          2: lambda x: Mutation.gene_insertion(x),
+                          3: lambda x: Mutation.cross_gene_insertion(x),
+                          4: lambda x: Mutation.cross_gene_swap(x)}
 
         for i in range(1, len(self.population)):
             individual = self.population[i]
@@ -332,7 +362,8 @@ class Mutation:
         return newPopulation
 
     # In-Route mutation. Inverts a chosen subset of a selected genome
-    def sequence_inversion(self, individual):
+    @staticmethod
+    def sequence_inversion(individual):
         # Select a genome from the individual at random
         k = random.randint(0, len(individual) - 1)
         genome = individual[k]
@@ -356,8 +387,9 @@ class Mutation:
 
         return individual
 
-    # In-Route mutaion. Selects two genes in a selected genome and swaps them
-    def gene_transposition(self, individual):
+    # In-Route mutation. Selects two genes in a selected genome and swaps them
+    @staticmethod
+    def gene_transposition(individual):
         #  Select a random genome from the individual
         k = random.randint(0, len(individual) - 1)
 
@@ -375,7 +407,8 @@ class Mutation:
         return individual
 
     # In-Route mutation. Moves a gene in a genome to another index location
-    def gene_insertion(self, individual):
+    @staticmethod
+    def gene_insertion(individual):
 
         #  Select a random genome from the individual
         k = random.randint(0, len(individual) - 1)
@@ -392,7 +425,8 @@ class Mutation:
         return individual
 
     # Cross-Route mutation. Takes a gene from one genome and inserts it in another
-    def cross_gene_insertion(self, individual):
+    @staticmethod
+    def cross_gene_insertion(individual):
         # Randomly sample two genomes to be manipulated
         genome1, genome2 = random.sample(individual, 2)
 
@@ -418,5 +452,24 @@ class Mutation:
         # Remove the selected gene from the chosen genome and insert it into the other
         selected_gene = individual[r_genome].pop(random.randint(0, len(individual[r_genome])-1))
         individual[e_genome].insert(random.randint(0, len(individual[e_genome])-1), selected_gene)
+
+        return individual
+
+    # Takes a gene from two different genomes and swaps them
+    @staticmethod
+    def cross_gene_swap(individual):
+        # Randomly sample two genomes to be manipulated
+        genome1, genome2 = random.sample(individual, 2)
+        genome1_index, genome2_index = individual.index(genome1), individual.index(genome2)
+
+        # Select two genes from the two genomes to be swapped
+        select_element1 = random.randint(0, len(individual[genome1_index]) - 1)
+        select_element2 = random.randint(0, len(individual[genome2_index]) - 1)
+        swap_element1 = individual[genome1_index][select_element1]
+        swap_element2 = individual[genome2_index][select_element2]
+
+        # Swap the two elements
+        individual[genome1_index][select_element1] = swap_element2
+        individual[genome2_index][select_element2] = swap_element1
 
         return individual

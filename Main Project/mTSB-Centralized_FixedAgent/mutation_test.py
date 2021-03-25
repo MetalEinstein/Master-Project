@@ -71,6 +71,7 @@ def swap(individual):
 
     return individual
 
+
 def chromosome_contraction(individual):
     if len(individual) > 1:
         print("Contraction individual ----------------------")

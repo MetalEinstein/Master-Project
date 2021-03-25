@@ -10,7 +10,7 @@ POP_SIZE = 50
 ELITE_SIZE = 5
 MUT_RATE = 0.10
 MAX_GENERATIONS = 500
-BREAKPOINT = 100
+BREAKPOINT = 50
 K_AGENTS = 3
 
 taskList = taskGeneratortesting(taskList)

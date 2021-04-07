@@ -7,33 +7,28 @@ import time
 
 
 taskList = []
-TASK_NUMBER = 25
+TASK_NUMBER = 30
 MAP_SIZE = 500
-POP_SIZE = 80
+POP_SIZE = 100
 ELITE_SIZE = 10
-MUTATION_RATE = 0.2
+MUTATION_RATE = 0.1
 MAX_GENERATIONS = 500
-BREAKPOINT = 100
+BREAKPOINT = 50
 
 
 #random.seed(1)
-
-#taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
-taskList = taskGeneratortesting(taskList)
-print(taskList)
-# home_city = taskList.pop(0)
-# initial_pop = initialPopulation(POP_SIZE, taskList)
-# print("\n")
-# print("Initial population: ", initial_pop)
-# #print("Length of population: ", len(initial_pop))
-# rankedFitness = rankRoutes(initial_pop, home_city)
-# print("Fitness scores: ", rankedFitness)
-# evolvePopulation = evolvePopulation(initial_pop, rankedFitness, ELITE_SIZE, MUTATION_RATE)
-# print("Evolved Population: ", evolvePopulation)
+# taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
+taskList, home_city = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
+# taskList = taskGeneratortesting(taskList)
+# print(taskList)
+# print("home: ", home_city)
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint):
-    home_city = population.pop(0)
+    # home_city = population.pop(0)
+    # print("home: ", home_city)
     pop = initialPopulation(popSize, population)
+    print("population1: ", pop)
+    print("type: ", type(pop))
     generation_diff = []
     progress = []
     progress.append(1 / rankRoutes(pop, home_city)[0][1])  # We track progress according to the best route

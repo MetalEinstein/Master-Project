@@ -164,8 +164,16 @@ class Crossover:
 
     # Takes in two individuals and mates them using ordered crossover resulting in a new route
     def crossover(self, parent1: List[object], parent2: List[object], p1, p2) -> List[object]:
+        print("parent1: ", parent1)
+        print("parent2: ", parent2)
         if parent1 == parent2:
+            print("parent2: ", parent2)
             parent2 = parent1
+            # random.shuffle(parent2)
+            print("parent2: ", parent2)
+
+        if parent1 != parent2:
+            print("hello world")
 
         # --- CROSSOVER OPERATOR (DPX) ---
         child = []
@@ -315,86 +323,82 @@ class Mutation:
 
     def mutate(self):
         newPopulation = [0] * len(self.population)
+        newPopulation[0] = self.population[0]  # Store the best individual without change (The king)
+        mutation_types = {0: lambda x: self.sequence_inversion(x),
+                          1: lambda x: self.gene_transposition(x),
+                          2: lambda x: self.gene_insertion(x),
+                          }
 
-        for i in range(len(self.population)):
+        for i in range(1, len(self.population)):
             individual = self.population[i]
-            mutateProb = random.random()
-            # print("Mutation probability: ", mutateProb)
-            # Check if individual_i will get this mutation
-            # Mutation 1 (switch two genes)
-            if mutateProb <= self.mutationRate:
-                # print("Mutating individual", i, "-------------------------------------------")
-                newIndividual = self.swap(individual)
-                newPopulation[i] = newIndividual
-            else:
-                #newPopulation.append(individual)
-                newPopulation[i] = individual
+            #print("individual: ", individual)
 
-            # mutateProb = random.random()
-            # print("Mutation probability2: ", mutateProb)
-            # # Check if individual_i will get this mutation
-            # # Mutation 1 (switch two genes)
-            # if mutateProb <= self.mutationRate:
-            #     print("Mutating individual", i, "-------------------------------------------")
-            #     newIndividual = self.swap(individual)
-            #     newPopulation[i] = newIndividual
-            # else:
-            #     #newPopulation.append(individual)
-            #     newPopulation[i] = individual
-            # print("Length of population", len(newPopulation))
-            # print("New population: ", newPopulation)
-            # print("\n")
+            # Randomly choose if the individual should be mutated
+            if random.random() <= self.mutationRate:
+                # Select a random mutation to apply to the individual
+                selected_mutation = random.choice(list(mutation_types.values()))
+                newPopulation[i] = selected_mutation(individual)
+
+            else:
+                newPopulation[i] = individual
         return newPopulation
 
+    # In-Route mutation. Inverts a chosen subset of a selected genome
+    def sequence_inversion(self, individual):
+        # Select a genome from the individual at random
+        k = random.randint(0, len(individual) - 1)
+        genome = individual[k]
 
-    def swap(self, individual):
-        # print("Individual: ", individual)
-        # Flatten list, since we need 1d list. Append 0 where original split was
-        flatIndividual = self.flatten(individual)
-        # print("Flat individual: ", flatIndividual)
-        # Generate two genes to be switched
-        gene1, gene2 = random.sample(flatIndividual, 2)
-        # print("Genes: ", gene1, gene2)
-        # Switch genes
-        a, b = flatIndividual.index(gene1), flatIndividual.index(gene2)
-        flatIndividual[b], flatIndividual[a] = flatIndividual[a], flatIndividual[b]
+        if len(genome) > 1:
+            # Randomly choose a start and end index to specify the gene sequence to be inverted
+            start_index = random.randint(0, len(genome) - 2)
+            end_index = random.randint(start_index, len(genome) - 1)
 
-        newIndividual = self.unflatten(flatIndividual)
-        return newIndividual
+            # Insure that at least two genes are always being inverted
+            if start_index == end_index:
+                end_index += 1
 
-    # TODO: This seems kinda messy. Find better/faster way of doing this.
-    # Transform into a 1d list
-    def flatten(self, individual):
-        newIndividual = []
-        index = 0
-        for sublist in individual:
-            for item in sublist:
-                newIndividual.append(item)
-            newIndividual.append(0+index)  # To save the split locations, transform into unique virtual cities
-            index += 1
-        return newIndividual
+            # Take out the selected sequence and invert it
+            subset = genome[start_index:end_index + 1]
+            subset.reverse()
 
-    # TODO: This seems kinda messy. Find better/faster way of doing this.
-    # Remove appended virtual city from list, since it is no longer needed
-    def unflatten(self, flatIndividual):
-        index = 0
-        dex = 0
-        idx_list = []
-        # Split list into lists by splitter value 0, so we get original list structure
-        size = len(flatIndividual)
-        # TODO: Beautification. Find a way to do it with list comprehension
-        for idx, val in enumerate(flatIndividual):
-            if val == 0 + index:
-                idx_list.append(idx + 1)
-                index += 1
-        newIndividual = [flatIndividual[i: j] for i, j in
-                         zip([0] + idx_list, idx_list +
-                             ([size] if idx_list[-1] != size else []))]
-        for item in newIndividual:
-            for element in item:
-                try:
-                    item.remove(0 + dex)
-                    dex += 1
-                except ValueError:
-                    pass
-        return newIndividual
+            # Reinsert the inverted gene sequence into the original genome and insert into the individual
+            genome[start_index:end_index + 1] = subset
+            individual[k] = genome
+
+        return individual
+
+    # In-Route mutation. Selects two genes in a selected genome and swaps them
+    def gene_transposition(self, individual):
+        #  Select a random genome from the individual
+        k = random.randint(0, len(individual) - 1)
+
+        # Insure that the genome selected has at least two genes
+        while len(individual[k]) <= 1:
+            k = random.randint(0, len(individual) - 1)
+
+        # Randomly take two genes from the genome to be switched
+        gene1, gene2 = random.sample(individual[k], 2)
+
+        #  Takes the index positions, to only swap the chosen genes
+        a, b = individual[k].index(gene1), individual[k].index(gene2)
+        individual[k][b], individual[k][a] = individual[k][a], individual[k][b]
+
+        return individual
+
+    # In-Route mutation. Moves a gene in a genome to another index location
+    def gene_insertion(self, individual):
+
+        #  Select a random genome from the individual
+        k = random.randint(0, len(individual) - 1)
+        while len(individual[k]) <= 1:
+            k = random.randint(0, len(individual) - 1)
+
+        # Select a gene to be moved and a place to move it to
+        selected_gene = individual[k].pop(random.randint(0, len(individual[k]) - 1))
+        insertion_point = random.randint(0, len(individual[k]) - 1)
+
+        # Insert the gene into its new index location
+        individual[k].insert(insertion_point, selected_gene)
+
+        return individual

@@ -21,15 +21,6 @@ BREAKPOINT = 100
 #taskList = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 taskList = taskGeneratortesting(taskList)
 print(taskList)
-# home_city = taskList.pop(0)
-# initial_pop = initialPopulation(POP_SIZE, taskList)
-# print("\n")
-# print("Initial population: ", initial_pop)
-# #print("Length of population: ", len(initial_pop))
-# rankedFitness = rankRoutes(initial_pop, home_city)
-# print("Fitness scores: ", rankedFitness)
-# evolvePopulation = evolvePopulation(initial_pop, rankedFitness, ELITE_SIZE, MUTATION_RATE)
-# print("Evolved Population: ", evolvePopulation)
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint):
     home_city = population.pop(0)

@@ -75,13 +75,13 @@ def rankRoutes(population, homeCity):
 
 
 def evolvePopulation(population, popRanked, eliteSize, mutationRate):
-    matingPool = Selection(population, popRanked, eliteSize).matingPool()
+    postMu, postSel, matingPool = Selection(population, popRanked, eliteSize).matingPool()
     newCrossoverPopulation = Crossover(matingPool, eliteSize).evolve()
     # TODO make a mutation check here, so we don't initiate function unless we have to. Might give faster execution
     # TODO: input population should be the one coming from the crossover function
     newPopulation = Mutation(newCrossoverPopulation, mutationRate).mutate()
 
-    return newPopulation
+    return postMu, postSel, newPopulation
 
 
 def city_connect(final_population, size, best_index, home_city):

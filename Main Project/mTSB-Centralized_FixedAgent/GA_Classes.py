@@ -2,6 +2,10 @@ import numpy as np
 import random
 import pandas as pd
 from typing import *
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+import scipy.stats as stats
+import math
 
 
 class City:
@@ -92,9 +96,20 @@ class Selection:
                     break
         return selectionResults
 
+    @staticmethod
+    def population_variation(fit_pop):
+        fitness_list = [f for i, f in fit_pop]
+
+        # Calculating mean and standard deviation
+        _, std = norm.fit(fitness_list)
+
+        return std
+
     # Selects the best fitting individual in a selected subset of a chosen size
     def tournament_selection(self):
-        selection_size = 6
+        postMu = Selection.population_variation(self.popRanked)
+
+        selection_size = 15
         selectionResults = []
         selectionPool = random.sample(self.popRanked, len(self.popRanked))
 
@@ -115,16 +130,27 @@ class Selection:
                 last_fitness = fitness
             selectionResults.append(max_index)
 
-        return selectionResults
+        fitness_postSel = []
+        for id in selectionResults:
+            temp = ()
+            for i in range(len(self.popRanked)):
+                if id == self.popRanked[i][0]:
+                    temp = [id, self.popRanked[i][1]]
+                    fitness_postSel.append(temp)
+                    break
+
+        postSel = Selection.population_variation(fitness_postSel)
+
+        return postMu, postSel, selectionResults
 
     # Creates a list of the best suited routes
     def matingPool(self):
         matingpool = []
-        selectionResults = self.tournament_selection()
+        postMu, postSel, selectionResults = self.tournament_selection()
         for i in range(0, len(selectionResults)):
             index = selectionResults[i]
             matingpool.append(self.population[index])
-        return matingpool
+        return postMu, postSel, matingpool
 
 
 class Crossover:

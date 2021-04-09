@@ -1,6 +1,5 @@
 import numpy as np
 import random
-import pandas as pd
 from typing import *
 
 
@@ -23,7 +22,6 @@ class Fitness:
     def __init__(self, population, homeCity):
         self.homeCity = homeCity
         self.population = population
-        #self.route = route
         self.distance = 0
         self.fitness = 0.0
 
@@ -63,38 +61,14 @@ class Fitness:
 
 
 class Selection:
-    def __init__(self, population, popRanked, eliteSize):
+    def __init__(self, population, popRanked, eliteSize, selectionSize):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
         self.population = population
-
-    # Creates a mating pool by assigning probabilities according to the individual fitness scores
-    # Better fitness score = Higher probability of being picked
-    # Also insures that the best individuals in the population carries on to the next
-    def proportionate_selection(self):
-        selectionResults = []
-
-        # Assign probabilities to each individual in the population
-        df = pd.DataFrame(np.array(self.popRanked), columns=["Index", "Fitness"])
-        df['cum_sum'] = df.Fitness.cumsum()
-        df['cum_perc'] = 100 * df.cum_sum / df.Fitness.sum()
-
-        # Picks out the top individuals in the population for the mating-pool. Not chosen by probability
-        for i in range(0, self.eliteSize):
-            selectionResults.append(self.popRanked[i][0])  # Appends list with the index of the best individuals
-
-        # Fills out the remaining mating pool according to the probabilities assigned to each individual
-        for i in range(0, len(self.popRanked) - self.eliteSize):
-            pick = 100 * random.random()
-            for i in range(0, len(self.popRanked)):
-                if pick <= df.iat[i, 3]:
-                    selectionResults.append(self.popRanked[i][0])
-                    break
-        return selectionResults
+        self.selectionSize = selectionSize
 
     # Selects the best fitting individual in a selected subset of a chosen size
     def tournament_selection(self):
-        selection_size = 6
         selectionResults = []
         selectionPool = random.sample(self.popRanked, len(self.popRanked))
 
@@ -104,8 +78,7 @@ class Selection:
 
         # Choose the remaining individuals to the mating pool through tournament selection
         for i in range(0, len(self.popRanked) - self.eliteSize):
-            check_relative_to = random.randint(0, len(selectionPool) - 1 - selection_size)
-            temp_subPool = selectionPool[check_relative_to:check_relative_to + selection_size + 1]
+            temp_subPool = random.sample(selectionPool, self.selectionSize)
 
             max_index = temp_subPool[0][0]
             last_fitness = temp_subPool[0][1]
@@ -132,7 +105,8 @@ class Crossover:
         self.matingPool = matingPool
         self.eliteSize = eliteSize
 
-    def continuous(self, individual):
+    @staticmethod
+    def continuous(individual):
         continuous_indi = []
         for g in range(len(individual)):
             if g < len(individual):
@@ -142,7 +116,8 @@ class Crossover:
                 break
         return continuous_indi
 
-    def compare(self, parent1, parent2):
+    @staticmethod
+    def compare(parent1, parent2):
         match_list = []
         fragment = []
 
@@ -175,9 +150,9 @@ class Crossover:
         remainder = [task for task in parent2 if task not in fragment and task != 0]
         return match_list, fragment, remainder
 
-    def create_fragment(self, fragment, remainder):
+    @staticmethod
+    def create_fragment(fragment, remainder):
         # Order the fragments in a nested list for reconstruction
-        sub_list = []
         fragment_list = []
         while len(fragment) > 0:
             if 0 in fragment:

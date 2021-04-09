@@ -1,0 +1,28 @@
+Possible Improvements
+-------------------------------------------------
+
+* Focused mutation:
+	- First figure out which part of the genome affects the fitness
+	  score the most negatively 
+	
+	- Next focus the mutations on thay part of the genome 
+
+* Initial Large Population:
+	- If the initial population is randomly created there exists a
+	  great diversity of solutions, thus there is a high probability
+	  that a solution close to the globally optimal one is in there 
+
+	- So for the first loop there should be a big initial population.
+	  after fitness scores are assigned pick the "N" best solutions 
+	  for the next population. "N" will be the size of the new
+	  population. 
+
+* Identify periods of stagnation:
+	- If a better solution isn't found for some time the population size
+	  could expand in response for a single loop to search for one.
+
+	- To create new individuals the "N" elites could be chosen at random
+	  to be subject to a set of mutations. An elite subjected to a mutation
+	  or set of mutations will be considered a new individual and added to
+	  the population. The idea here is that the elites are closer to the 
+	  global minimum thus just needs a kick in the right direction.  

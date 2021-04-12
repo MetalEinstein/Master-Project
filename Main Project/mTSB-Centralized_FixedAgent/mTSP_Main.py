@@ -5,6 +5,7 @@ import time
 import matplotlib
 import numpy as np
 
+#Best Score: 3391.88
 
 taskList = []
 TASK_NUMBER = 25
@@ -41,7 +42,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
         progress_past = 1 / rankRoutes(pop, home_city)[0][1]
         rankedFitness = rankRoutes(pop, home_city)
-        postMu, postSel, pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate)
+        postMu, postSel, pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, i)
         progress_future = 1 / rankRoutes(pop, home_city)[0][1]
         generation_diff.append(abs(progress_past - progress_future))
 

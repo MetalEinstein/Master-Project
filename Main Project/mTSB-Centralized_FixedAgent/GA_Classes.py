@@ -65,12 +65,13 @@ class Fitness:
 
         return fitnessList
 
-
+generation0 = 0
 class Selection:
-    def __init__(self, population, popRanked, eliteSize):
+    def __init__(self, population, popRanked, eliteSize, generation):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
         self.population = population
+        self.generation = generation
 
     # Creates a mating pool by assigning probabilities according to the individual fitness scores
     # Better fitness score = Higher probability of being picked
@@ -111,6 +112,7 @@ class Selection:
 
         selection_size = 15
         selectionResults = []
+
         selectionPool = random.sample(self.popRanked, len(self.popRanked))
 
         # Add the elites directly to the mating pool
@@ -144,10 +146,39 @@ class Selection:
         return postMu, postSel, selectionResults
 
     # Creates a list of the best suited routes
+    # def matingPool(self):
+    #     matingpool = []
+    #     postMu, postSel, selectionResults = self.tournament_selection()
+    #     if self.generation == 0:
+    #         for i in range(0, len(selectionResults)):
+    #             index = selectionResults[i]
+    #             matingpool.append(self.population[index])
+    #     else:
+    #         #for i in range(0, len(selectionResults)):
+    #         for i in range(0, 50):
+    #             index = selectionResults[i]
+    #             matingpool.append(self.population[index])
+    #     return postMu, postSel, matingpool
+
+    # def matingPool(self):
+    #     matingpool = []
+    #
+    #     postMu, postSel, selectionResults = self.tournament_selection()
+    #     if self.generation == 0:
+    #         for i in range(0, 50):
+    #             matingpool.append(self.population[self.popRanked[i][0]])
+    #     else:
+    #         #for i in range(0, len(selectionResults)):
+    #         for i in range(0, 50):
+    #             index = selectionResults[i]
+    #             matingpool.append(self.population[index])
+    #     return postMu, postSel, matingpool
+
     def matingPool(self):
         matingpool = []
         postMu, postSel, selectionResults = self.tournament_selection()
         for i in range(0, len(selectionResults)):
+        #for i in range(0, 50):
             index = selectionResults[i]
             matingpool.append(self.population[index])
         return postMu, postSel, matingpool

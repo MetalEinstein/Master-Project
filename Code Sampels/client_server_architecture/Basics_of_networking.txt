@@ -1,0 +1,65 @@
+Python Networking Tutorial
+----------------------------------------------------
+
+Introduction to IP adresses:
+
+* An ip adress is an unique address that identifies a specific 
+pc using the internet protocol to commuicate over the internet 
+
+* A IP adress can be public and private
+	- Public -> Given by the internet service provider
+	- Private -> Provided by the router 
+
+* In IP can be static and Dynamic 
+	- Static -> Used by servers and websites 
+	- Dynamic -> Used by computers and mobiles 
+
+
+Introduction to Ports:
+
+* While the IP adress can be said to define the city and street, 
+the port defines the specific house on that street. We need both to connect to a 
+specific computer.   
+
+* Different ports can be used for different things like file transfer,
+sending mail or showing web pages and so on.
+
+
+Introduction to Sockets:
+
+* Definition: A socket is one endpoint of a two-way communication link 
+between two programs running on the network. A socket is bound to a port
+number so that the TCP layer can identify the application that the data is
+destined to be sent to. An endpoint is a combination of an IP adress and a 
+port number.
+
+
+Direct + Reverse Connection:
+
+* Direct Connection:
+	- Requires a Host IP Adress + Port 
+	- Requires a Socket 
+	- Problems are:
+		# It's difficult to get IP address
+		# Even if we get the IP adress the IP adress is dynamic so
+		  it's always changing 
+
+* Reverse Connection:
+	- Requires the Host IP adress + Port 
+	- Requires a Socket 
+	- The client instead connects to the server through a script containing
+	  the servers IP address. Every time the clients IP changes the script
+	  recalibrates.
+	- Problem is:
+		# The server IP adress will change. So to counteract this the client
+		  can insted, through a script connect to a server which have a
+		  static IP adress. 
+
+
+
+
+
+
+
+
+	

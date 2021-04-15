@@ -16,44 +16,58 @@ def city_setup(city_list, num, size):
 
     return cityList
 
-def city_matrix(num): # makes the city connections
+# def city_matrix(num): # makes the city connections with ones and zeroes
+#     for i in range(0, num):
+#         a = []
+#         for j in range(0, num):
+#             if i == j:
+#                 a.append(int(0))
+#             else:
+#                 a.append(int(random.randint(0, 1)))
+#
+#         matrixmap.append(a)
+#     print(np.matrix(matrixmap))
+
+def city_matrix(num): # makes the city connections with distances
     for i in range(0, num):
         a = []
         for j in range(0, num):
-            if i == j:
-                a.append(int(0))
-            else:
-                a.append(int(random.randint(0, 1)))
+                x = cityList[i].x - cityList[j].x
+                y = cityList[i].y - cityList[j].y
+                distance = np.sqrt((x ** 2) + (y ** 2))
+                a.append(int(distance))
 
         matrixmap.append(a)
-    #print(np.matrix(matrixmap))
-
+    print(np.matrix(matrixmap))
 
 # #           0  1  2  3  4  5
-matrixmap = [[0, 0, 0, 1, 0, 0],    # 0
-             [1, 0, 0, 0, 0, 0],    # 1
-             [0, 0, 0, 0, 0, 0],    # 2
-             [1, 1, 0, 0, 0, 0],    # 3
-             [1, 0, 0, 0, 0, 1],    # 4
-             [0, 0, 0, 0, 1, 0],    # 5
-]
+# matrixmap = [[1, 1, 1, 1, 1, 1],    # 0
+#              [1, 0, 1, 1, 1, 1],    # 1
+#              [1, 1, 0, 1, 1, 1],    # 2
+#              [1, 1, 1, 0, 1, 1],    # 3
+#              [1, 1, 1, 1, 0, 1],    # 4
+#              [1, 1, 1, 1, 1, 0],    # 5
+# ]
 
 
-# matrixmap = []
+matrixmap = []
 cityList = []
 num_city = 6
 map_size = 500
 
-cityList = city_setup(cityList, num_city, map_size)
-# city_matrix(num_city)
-
-
 xs = []
 ys = []
+
+
+cityList = city_setup(cityList, num_city, map_size)
 for i in range(0, num_city):
     xs.append(cityList[i].x)
     ys.append(cityList[i].y)
 print(f"x = {xs}, y = {ys}")
+city_matrix(num_city)
+
+
+
 
 
 
@@ -62,19 +76,19 @@ print(f"x = {xs}, y = {ys}")
 map_city = np.ones((map_size, map_size, 3), np.uint8)
 map_city.fill(255)
 
-for i, node in enumerate(matrixmap):
-    a = []
-    for index, edge in enumerate(node):
-        if edge != 0:
-            x = xs[i] - xs[index]
-            y = ys[i] - ys[index]
-            distance = np.sqrt((x ** 2) + (y ** 2))
-            print(str(i), int(distance), index, sep=' -> ')
-            matrixmap[i][index] = int(distance)
-            cv2.circle(map_city, (xs[i], ys[i]), 3, 0, -1)  # Visualizing the position of city's on map
-            cv2.line(map_city, (xs[i], ys[i]), (xs[index], ys[index]), (255, 0, 0), thickness=1, lineType=8)
-print(np.matrix(matrixmap))
-cv2.imshow('hej', map_city)
-cv2.waitKey()
+# for i, node in enumerate(matrixmap):
+#     a = []
+#     for index, edge in enumerate(node):
+#         if edge != 0:
+#             x = xs[i] - xs[index]
+#             y = ys[i] - ys[index]
+#             distance = np.sqrt((x ** 2) + (y ** 2))
+#             print(str(i), int(distance), index, sep=' -> ')
+#             matrixmap[i][index] = int(distance)
+#             cv2.circle(map_city, (xs[i], ys[i]), 3, 0, -1)  # Visualizing the position of city's on map
+#             cv2.line(map_city, (xs[i], ys[i]), (xs[index], ys[index]), (255, 0, 0), thickness=1, lineType=8)
+# print(np.matrix(matrixmap))
+# cv2.imshow('City Map', map_city)
+# cv2.waitKey()
 
 

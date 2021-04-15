@@ -108,6 +108,7 @@ class Selection:
 
     # Selects the best fitting individual in a selected subset of a chosen size
     def tournament_selection(self):
+    # def tournament_selection(self, selection_size):
         postMu = Selection.population_variation(self.popRanked)
 
         selection_size = 15
@@ -162,12 +163,16 @@ class Selection:
 
     # def matingPool(self):
     #     matingpool = []
-    #
-    #     postMu, postSel, selectionResults = self.tournament_selection()
+    #     #selection_size = 15
+    #     #postMu, postSel, selectionResults = self.tournament_selection()
     #     if self.generation == 0:
+    #         postMu, postSel, selectionResults = self.tournament_selection(selection_size=400)
     #         for i in range(0, 50):
-    #             matingpool.append(self.population[self.popRanked[i][0]])
+    #             #matingpool.append(self.population[self.popRanked[i][0]])
+    #             index = selectionResults[i]
+    #             matingpool.append(self.population[index])
     #     else:
+    #         postMu, postSel, selectionResults = self.tournament_selection(selection_size=15)
     #         #for i in range(0, len(selectionResults)):
     #         for i in range(0, 50):
     #             index = selectionResults[i]

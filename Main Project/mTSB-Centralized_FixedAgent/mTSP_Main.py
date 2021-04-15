@@ -6,6 +6,8 @@ import matplotlib
 import numpy as np
 
 #Best Score: 3391.88
+#Best score: 3388.84
+#Best score: 3382.28
 
 taskList = []
 TASK_NUMBER = 25

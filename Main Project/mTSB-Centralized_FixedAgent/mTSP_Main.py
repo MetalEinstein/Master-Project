@@ -13,10 +13,11 @@ ELITE_SIZE = 5
 MUT_RATE = 0.20
 MAX_GENERATIONS = 500
 BREAKPOINT = 50
-K_AGENTS = 3
+#K_AGENTS = 3
 INITIAL_SELECTION_SIZE = 6
 
-taskList = taskGeneratortesting(taskList)
+taskList, K_AGENTS = taskGeneratortesting(taskList)
+#taskList, K_AGENTS = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, sel_size):

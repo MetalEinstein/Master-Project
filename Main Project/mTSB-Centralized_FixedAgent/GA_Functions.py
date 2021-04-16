@@ -3,32 +3,48 @@ import numpy as np
 import cv2
 from typing import *
 from GA_Classes import *
-
+from sklearn.cluster import KMeans
+import kneed
+from matplotlib import pyplot as plt
 
 def taskGenerator(taskList: List[object], taskNum: int, mapSize: int):
     # We create a set number of city's each of which is positioned randomly
+    temp = []
+    NUM_SALESMEN = 5
     for i in range(0, taskNum):
         # Generate a random location for a city
         city_posx = int(random.random() * mapSize)
         city_posy = int(random.random() * mapSize)
+        temp.append((city_posx, city_posy))  # Creating a list of objects/city's
 
-        # Add the generated city to the city list and add it to the map
-        taskList.append(City(x=city_posx, y=city_posy))  # Creating a list of objects/city's
+    label = perform_k_means(temp, NUM_SALESMEN)
 
-    return taskList
+    for j in range(0, taskNum):
+        taskList.append(City(x=temp[j][0], y=temp[j][1]))
+
+    print("tasklist: ", taskList)
+    return taskList, label
 
 
 def taskGeneratortesting(taskList: List[object]):
     # We create a set number of city's each of which is positioned randomly
+    temp = []
+    NUM_SALESMEN = 5
     #list = [(67,423), (381,127), (247,224), (325,394), (46,14), (417,216), (381,1), (222,360), (114,472), (450,15), (12,270), (469,190), (108,211), (14,110), (218,247), (116,115), (109,229), (144,10), (418,278), (321,92), (496,429), (60,166), (360,355), (468,211), (415,335)]
     cityx = [67, 381, 247, 325, 46, 417, 381, 222, 114, 450, 12, 469, 108, 14, 218, 116, 109, 144, 418, 321, 496, 60, 360, 468, 415]
     cityy = [423, 127, 224, 394, 14, 216, 1, 360, 472, 15, 270, 190, 211, 110, 247, 115, 229, 10, 278, 92, 429, 166, 355, 211, 335]
     for i in range(len(cityx)):
         city_posx = cityx[i]
         city_posy = cityy[i]
-        taskList.append(City(x=city_posx, y=city_posy))
+        temp.append((city_posx, city_posy))
 
-    return taskList
+    label = perform_k_means(temp, NUM_SALESMEN)
+
+    for j in range(len(cityx)):
+        taskList.append(City(x=temp[j][0], y=temp[j][1]))
+
+    print("tasklist: ", taskList)
+    return taskList, label
 
 
 def createRoute(taskList, num_agents):
@@ -120,3 +136,24 @@ def city_connect(final_population, size, best_index, home_city):
                 cv2.line(map_city, (city1_posx, city1_posy), (city2_posx, city2_posy), color_dic[best_individual.index(genomes)], thickness=1, lineType=8)
 
     return map_city
+
+def perform_k_means(data, num_salesmen):
+    sse = []
+    k_rng = range(1, num_salesmen+1)
+
+    for k in k_rng:
+        km = KMeans(n_clusters=k)
+        km.fit(data)
+        sse.append(km.inertia_)
+
+    # TODO improve the estimation of the best number of K. Maybe through tracking the slope of the curve
+    """
+    for i in range(0, len(sse)-1):
+        m = 1-((sse[i+1]/sse[i])/1)
+        print(m)
+    """
+
+    kn = kneed.KneeLocator(k_rng, sse, curve='convex', direction='decreasing', interp_method='interp1d')
+    print("Best Estimated K: ", kn.elbow)
+
+    return kn.elbow

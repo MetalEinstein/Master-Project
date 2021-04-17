@@ -4,6 +4,26 @@ from my_classes import City, Fitness
 from my_functions import *
 import random
 
+Task_number = 5
+agents = 3
+def city_connection(Task_number, agents):
+    t1 = []
+    t2 = []
+    for h in range(agents):
+        t1.append([])
+        for i in range(Task_number):
+            t1[h].append([])
+            for j in range(0, 4):
+                t1[h][i].append(random.randint(0, 500))
+            t1[h][i] = tuple(t1[h][i])
+
+    t2 = copy.deepcopy(t1)
+    random.shuffle(t2)
+    for i in range(agents):
+        random.shuffle(t2[i])
+    return t1, t2
+
+
 def city_setup(city_list, num, size):
     # We create a set number of city's each of which is positioned randomly
     for i in range(0, num):

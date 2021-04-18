@@ -51,35 +51,11 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         progress.append(1 / rankedFitness[0][1])
         # print("Current Distance: " + str(1 / rankedFitness[0][1]) + ",   ", "Generation: " + str(i))
         wandb.log({"Current Distance": 1 / rankedFitness[0][1]}, step=i)
-        wandb.log({"Best Distance": 1 / rankedFitness[0][0]}, step=i)
         wandb.log({"Time sec": (time.time() - gen_time)}, step=i)
 
         for f in range(len(rankedFitness)):
             sum_distance += 1 / rankedFitness[f][1]
         mean_progress.append(sum_distance / len(rankedFitness))
-
-        """
-        # PLOTTING Standard Deviation
-        std_list_Sel = [postSel]
-        std_list_Mu = [postMu]
-        gen = [i]
-        if i % 5 == 0:
-            std_list_Sel.append(postSel)
-            std_list_Mu.append(postMu)
-            gen.append(i)
-
-            plt.subplot(2, 1, 1)
-            plt.plot(gen, std_list_Sel, '-ok')
-            plt.title('Population Deviation After Selection and Mutation')
-            plt.ylabel('Standard Deviation')
-
-            plt.subplot(2, 1, 2)
-            plt.plot(gen, std_list_Mu, '-ok')
-            plt.xlabel('Generation')
-            plt.ylabel('Standard Deviation')
-
-            plt.pause(0.005)
-        """
 
         # We check the progress over a set number of generations. If progress = 0 we stop the algorithm
         # Might be an alternative just to use breakpoint instead of iteration for a set number of generations
@@ -115,9 +91,10 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     #     print(agents)
     # print("--- %s seconds ---" % int((time.time() - start_time)))
     # cv2.imshow("Connections", map_city)
-    if best_indi < 3500:
+    # print(1 / rankedFitness[0][1])
+    if (1 / rankedFitness[0][1]) < 3800:
         cv2.imwrite('C:/Users/Alexander Staal/Desktop/Robotics/Kandidat (msc in robotics)/10. '
-                    'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/Map_connection' +
+                    'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/Map_connections' +
                     str("(" + id + ")") + '.png', map_city)
 
     # plt.subplot(2, 1, 1)
@@ -139,8 +116,8 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 #
 # for i in range(10):
 #     start_time = time.time()
-#     taskList = taskGeneratortesting(taskList)
-#     geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_RATE,
+# taskList = taskGeneratortesting(taskList)
+# geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_RATE,
 #                      generations=MAX_GENERATIONS, breakpoint=BREAKPOINT, numAgents=K_AGENTS)
 
 # for i in range(4):
@@ -174,13 +151,13 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
 
 sweep_config = {
-    "name": "tcx_test",
+    "name": "pmx_test",
     "method": 'grid',  # 'random',
     "parameters": {
         # "POP_SIZE": {"values": [50]},
         "ELITE_SIZE": {"values": [5, 10, 15]},
         "MUT_RATE": {"values": [0.1, 0.2, 0.3, 0.4, 0.5]},
-        "LOOP_SIZE": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
+        "REPEATS": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
     }
 }
 
@@ -191,7 +168,7 @@ def train():
     # for x in range(10):
     # run = wandb.init(reinit=True)
     id = wandb.util.generate_id()
-    run = wandb.init(id=id, name=("tcx" + str('(' + id + ')')))
+    run = wandb.init(id=id, name=("pmx" + str('(' + id + ')')))
     taskList = []
     config = wandb.config
     config.task_number = TASK_NUMBER

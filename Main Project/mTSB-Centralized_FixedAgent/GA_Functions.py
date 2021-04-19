@@ -76,12 +76,12 @@ def initialPopulation(popSize, taskList, num_agents):
     return population
 
 
-def rankRoutes(population, homeCity):
+def rankRoutes(population, homeCity, velocity):
     fitnessResults = {}
 
     # Will fill a dictionary with key-value pairs
     # Key = Population index, value = corresponding fitness score
-    fitness = Fitness(population, homeCity).routeFitness()
+    fitness = Fitness(population, homeCity, velocity).routeFitness()
     for i in range(len(fitness)):
         fitnessResults[i] = fitness[i]
 

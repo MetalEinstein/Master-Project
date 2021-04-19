@@ -7,27 +7,28 @@ import time
 
 taskList = []
 TASK_NUMBER = 25
-MAP_SIZE = 500
+MAP_SIZE = 500  # meter
 POP_SIZE = 50
 ELITE_SIZE = 5
 MUT_RATE = 0.20
 MAX_GENERATIONS = 500
 BREAKPOINT = 50
-#K_AGENTS = 3
 INITIAL_SELECTION_SIZE = 6
+#VELOCITY = 100  # 100 / hour
 
 taskList, K_AGENTS = taskGeneratortesting(taskList)
 #taskList, K_AGENTS = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, sel_size):
+    velocity = 0.7  # m/s
     home_city = population.pop(0)
     pop = initialPopulation(popSize, population, numAgents)
     generation_diff = []
     progress = []
     mean_progress = []
 
-    temp_rank = rankRoutes(pop, home_city)
+    temp_rank = rankRoutes(pop, home_city, velocity)
     progress.append(1 / temp_rank[0][1])  # We track progress according to the best route
 
     sum_distance = 0
@@ -40,10 +41,10 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         sum_distance = 0
         p_counter += 1
 
-        progress_past = 1 / rankRoutes(pop, home_city)[0][1]
-        rankedFitness = rankRoutes(pop, home_city)
+        progress_past = 1 / rankRoutes(pop, home_city, velocity)[0][1]
+        rankedFitness = rankRoutes(pop, home_city, velocity)
         pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, sel_size)
-        progress_future = 1 / rankRoutes(pop, home_city)[0][1]
+        progress_future = 1 / rankRoutes(pop, home_city, velocity)[0][1]
         generation_diff.append(abs(progress_past - progress_future))
 
         progress.append(1 / rankedFitness[0][1])

@@ -19,9 +19,10 @@ class City:
 
 
 class Fitness:
-    def __init__(self, population, homeCity):
+    def __init__(self, population, homeCity, velocity):
         self.homeCity = homeCity
         self.population = population
+        self.velocity = velocity
         self.distance = 0
         self.fitness = 0.0
 
@@ -55,7 +56,7 @@ class Fitness:
         fitnessList = [0] * len(self.routeDistance())
         for i in range(len(self.routeDistance())):
             if fitnessList[i] == 0:
-                fitnessList[i] = 1/self.routeDistance()[i]
+                fitnessList[i] = 1/(self.routeDistance()[i]/self.velocity)
 
         return fitnessList
 

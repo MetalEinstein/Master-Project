@@ -33,6 +33,8 @@ def taskGeneratortesting(taskList: List[object]):
     #list = [(67,423), (381,127), (247,224), (325,394), (46,14), (417,216), (381,1), (222,360), (114,472), (450,15), (12,270), (469,190), (108,211), (14,110), (218,247), (116,115), (109,229), (144,10), (418,278), (321,92), (496,429), (60,166), (360,355), (468,211), (415,335)]
     cityx = [67, 381, 247, 325, 46, 417, 381, 222, 114, 450, 12, 469, 108, 14, 218, 116, 109, 144, 418, 321, 496, 60, 360, 468, 415]
     cityy = [423, 127, 224, 394, 14, 216, 1, 360, 472, 15, 270, 190, 211, 110, 247, 115, 229, 10, 278, 92, 429, 166, 355, 211, 335]
+    # cityx = [574, 184, 1040, 1131, 1132, 892, 33, 666, 1040, 996, 1354, 1172, 1159, 1351, 813]
+    # cityy = [13, 160, 101, 194, 113, 129, 354, 394, 149, 409, 424, 216, 80, 20, 40]
     for i in range(len(cityx)):
         city_posx = cityx[i]
         city_posy = cityy[i]
@@ -76,12 +78,12 @@ def initialPopulation(popSize, taskList, num_agents):
     return population
 
 
-def rankRoutes(population, homeCity, velocity):
+def rankRoutes(population, homeCity, charging_station, velocity):
     fitnessResults = {}
 
     # Will fill a dictionary with key-value pairs
     # Key = Population index, value = corresponding fitness score
-    fitness = Fitness(population, homeCity, velocity).routeFitness()
+    fitness = Fitness(population, homeCity, charging_station, velocity).routeFitness()
     for i in range(len(fitness)):
         fitnessResults[i] = fitness[i]
 
@@ -98,7 +100,7 @@ def evolvePopulation(population, popRanked, eliteSize, mutationRate, sel_size):
     return newPopulation
 
 
-def city_connect(final_population, size, best_index, home_city):
+def city_connect(final_population, size, best_index, home_city, charging_station):
     map_city = np.ones((size, size, 3), np.uint8)
     map_city.fill(255)
     color_dic = {}
@@ -106,7 +108,25 @@ def city_connect(final_population, size, best_index, home_city):
     # Add the home city to the task list of each salesmen
     best_individual = final_population[best_index]
     for genome_index in range(len(best_individual)):
+        print("genome info: ", genome_index, best_individual[genome_index])
+        geneDistance = 0
         best_individual[genome_index].insert(0, home_city)
+        print("genome info home: ", genome_index, best_individual[genome_index])
+
+        for k in range(len(best_individual[genome_index])):
+
+            fromCity = best_individual[genome_index][k]
+            toCity = None
+            if k + 1 < len(best_individual[genome_index]):
+                toCity = best_individual[genome_index][k + 1]
+            else:
+                # When we get to the last city in the list we add the distance from it back to the initial city
+                toCity = best_individual[genome_index][0]
+            geneDistance += fromCity.distance(toCity)
+
+            if charging_station not in best_individual[genome_index] and geneDistance > 1500:
+                best_individual[genome_index].insert(k, charging_station)
+                print("genome info charging: ", genome_index, best_individual[genome_index])
 
     # Generate unique colors for each salesman
     for i in range(0, len(best_individual)):

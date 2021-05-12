@@ -1,7 +1,7 @@
-import random, time, operator
-import numpy as np
+import operator
+# import numpy as np
 import cv2
-from typing import *
+# from typing import *
 from GA_Classes import *
 
 
@@ -77,14 +77,12 @@ def rankRoutes(population, homeCity):
     return sorted(fitnessResults.items(), key=operator.itemgetter(1), reverse=True)  # Returns sorted list
 
 
-def evolvePopulation(population, popRanked, eliteSize, mutationRate, generation):
-    postMu, postSel, matingPool = Selection(population, popRanked, eliteSize, generation).matingPool()
-    newCrossoverPopulation = Crossover(matingPool, eliteSize).evolve()
-    # TODO make a mutation check here, so we don't initiate function unless we have to. Might give faster execution
-    # TODO: input population should be the one coming from the crossover function
-    newPopulation = Mutation(newCrossoverPopulation, mutationRate).mutate()
+def evolvePopulation(population, popRanked, eliteSize, mutationRate, sel_size):
+        matingPool = Selection(population, popRanked, eliteSize, sel_size).matingPool()
+        newCrossoverPopulation = Crossover(matingPool, eliteSize).evolve()
+        newPopulation = Mutation(newCrossoverPopulation, mutationRate).mutate()
 
-    return postMu, postSel, newPopulation
+        return newPopulation
 
 
 def city_connect(final_population, size, best_index, home_city):

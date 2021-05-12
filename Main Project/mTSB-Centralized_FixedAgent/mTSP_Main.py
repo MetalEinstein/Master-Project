@@ -1,24 +1,25 @@
 from GA_Functions import *
 import cv2
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
-import matplotlib
-import numpy as np
+# import matplotlib
+# import numpy as np
 import wandb
 
 # taskList = []
 TASK_NUMBER = 25
 MAP_SIZE = 500
-POP_SIZE = 50  # skiftes
+# POP_SIZE = 50  # skiftes
 # ELITE_SIZE = 5 #skiftes
 # MUT_RATE = 0.20 # skiftes
 MAX_GENERATIONS = 500
 BREAKPOINT = 100
 K_AGENTS = 3
+# INITIAL_SELECTION_SIZE = 15
 
 
-def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, id):
-    pop = 0
+def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, sel_size, id):
+    # pop = 0
     home_city = population.pop(0)
     pop = initialPopulation(popSize, population, numAgents)
     generation_diff = []
@@ -33,40 +34,36 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         sum_distance += 1 / temp_rank[i][1]
     mean_progress.append(sum_distance / len(temp_rank))
 
-    p_counter = 0
     breakcounter = 0
     bestdist = 0
     for i in range(0, generations):
         gen_time = time.time()
         sum_distance = 0
-        p_counter += 1
         breakcounter += 1
 
         progress_past = 1 / rankRoutes(pop, home_city)[0][1]
         rankedFitness = rankRoutes(pop, home_city)
-        postMu, postSel, pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, i)
+        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, sel_size)
         progress_future = 1 / rankRoutes(pop, home_city)[0][1]
         generation_diff.append(abs(progress_past - progress_future))
 
         progress.append(1 / rankedFitness[0][1])
         # print("Current Distance: " + str(1 / rankedFitness[0][1]) + ",   ", "Generation: " + str(i))
-        wandb.log({"Current Distance": 1 / rankedFitness[0][1]}, step=i)
-        wandb.log({"Time sec": (time.time() - gen_time)}, step=i)
+
 
         for f in range(len(rankedFitness)):
             sum_distance += 1 / rankedFitness[f][1]
         mean_progress.append(sum_distance / len(rankedFitness))
 
+        wandb.log({"Current Distance": 1 / rankedFitness[0][1]}, step=i)
+        wandb.log({"Time sec": (time.time() - gen_time)}, step=i)
+        wandb.log({"Mean": sum_distance / len(rankedFitness)}, step=i)
         # We check the progress over a set number of generations. If progress = 0 we stop the algorithm
         # Might be an alternative just to use breakpoint instead of iteration for a set number of generations
         if bestdist is not (rankedFitness[0][0]):
             bestdist = (rankedFitness[0][0])
-            # print('dist', rankedFitness[0][1])
             breakcounter = 0
         elif breakcounter >= BREAKPOINT:
-            # if p_counter == breakpoint:
-            #     print('breakc: ', breakcounter)
-            p_counter = 0
             total_diff = sum(generation_diff)
             generation_diff.clear()
 
@@ -85,34 +82,11 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     best_indi = rankedFitness[0][0]
     map_city = city_connect(pop, MAP_SIZE, best_indi, home_city)
 
-    # best_indi = pop[best_indi]
-    # print("agents: ")
-    # for agents in best_indi:
-    #     print(agents)
-    # print("--- %s seconds ---" % int((time.time() - start_time)))
-    # cv2.imshow("Connections", map_city)
-    # print(1 / rankedFitness[0][1])
-    if (1 / rankedFitness[0][1]) < 3800:
+
+    if (1 / rankedFitness[0][1]) < 3600:
         cv2.imwrite('C:/Users/Alexander Staal/Desktop/Robotics/Kandidat (msc in robotics)/10. '
                     'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/Map_connections' +
                     str("(" + id + ")") + '.png', map_city)
-
-    # plt.subplot(2, 1, 1)
-    # plt.plot(progress)
-    # plt.title('Distance for King and Mean distance for Population over the Generations')
-    # plt.ylabel('Distance of King')
-    #
-    # plt.subplot(2, 1, 2)
-    # plt.plot(mean_progress)
-    # plt.ylabel('Mean distance of Population')
-    # plt.xlabel('Generation')
-
-    # plt.savefig('test.png', bbox_inches='tight')
-    # plt.show()
-    # cv2.waitKey()
-
-
-#
 #
 # for i in range(10):
 #     start_time = time.time()
@@ -151,12 +125,13 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
 
 sweep_config = {
-    "name": "pmx_test",
+    "name": "pos_crossover_test",
     "method": 'grid',  # 'random',
     "parameters": {
-        # "POP_SIZE": {"values": [50]},
+        "POP_SIZE": {"values": [50]},
         "ELITE_SIZE": {"values": [5, 10, 15]},
-        "MUT_RATE": {"values": [0.1, 0.2, 0.3, 0.4, 0.5]},
+        "MUT_RATE": {"values": [0]},
+        "INITIAL_SELECTION_SIZE": {"values": [5, 10, 15]},
         "REPEATS": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
     }
 }
@@ -165,10 +140,8 @@ sweep_id = wandb.sweep(sweep_config, project="crossover")
 
 
 def train():
-    # for x in range(10):
-    # run = wandb.init(reinit=True)
     id = wandb.util.generate_id()
-    run = wandb.init(id=id, name=("pmx" + str('(' + id + ')')))
+    run = wandb.init(id=id, name=("pos" + str('(' + id + ')')))
     taskList = []
     config = wandb.config
     config.task_number = TASK_NUMBER
@@ -176,16 +149,18 @@ def train():
     config.max_generations = MAX_GENERATIONS
     config.breakpoint = BREAKPOINT
     config.k_agents = K_AGENTS
-    config.pop_size = POP_SIZE
+    # config.sel_size = INITIAL_SELECTION_SIZE
+    # config.pop_size = POP_SIZE
     start_time = time.time()
     taskList = taskGeneratortesting(taskList)
     geneticAlgorithm(population=taskList,
-                     popSize=POP_SIZE,
+                     popSize=run.config["POP_SIZE"],
                      eliteSize=run.config["ELITE_SIZE"],
                      mutationRate=run.config["MUT_RATE"],
                      generations=MAX_GENERATIONS,
                      breakpoint=BREAKPOINT,
                      numAgents=K_AGENTS,
+                     sel_size=run.config["INITIAL_SELECTION_SIZE"],
                      id=id)
     wandb.log({"Total time (sec)": int((time.time() - start_time))})
 

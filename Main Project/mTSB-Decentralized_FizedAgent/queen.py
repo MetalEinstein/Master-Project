@@ -7,6 +7,7 @@ CONNECTION_LIST = []
 EXPECTED_CONNECTIONS = 1
 HOST = socket.gethostname()
 PORT = 9998
+HEADERSIZE = 10
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
@@ -47,10 +48,12 @@ PICKSIZE = 20
 SEL_SIZE = 6
 
 data_param = [MUT_RATE, PICKSIZE, SEL_SIZE]
-
 data_fit = temp_rank
 data_pop = pop
+
+
 data_dic = pickle.dumps({0: data_param, 1: data_fit, 2: data_pop})
+data_dic = bytes(f"{len(data_dic):<{HEADERSIZE}}", 'utf-8')+data_dic
 
 # Send Data
 for conn, _ in CONNECTION_LIST:

@@ -12,42 +12,44 @@ def evolvePopulation(population, popRanked, mutationRate, pickSize, sel_size):
 
 
 # Socket params
+HEADERSIZE = 10
 HOST = socket.gethostname()
-PORT = 9999
+PORT = 9998
 
 while True:
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((HOST, PORT))
-        print("Connection Established!\n")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
+    print("Connection Established!\n")
 
-        # RECEIVE DATA
-        data = b""
-        while True:
-            packet = s.recv(4096)
-            if not packet:
-                break
-            data += packet
+    # RECEIVE DATA
+    data = b''
+    new_data = True
+    while True:
+        packet = s.recv(16)
+        if new_data:
+            msglen = int(packet[:HEADERSIZE])
+            new_data = False
 
-        print("Data Received")
+        data += packet
 
-        data_dic = pickle.loads(data)
+        if len(data)-HEADERSIZE == msglen:
+            data_dic = pickle.loads(data[HEADERSIZE:])
+            break
 
-        # UNPACK DATA
-        MUT_RATE, PICKSIZE, SEL_SIZE = data_dic[0]
-        fit = data_dic[1]
-        pop = data_dic[2]
+    print("Data Received")
 
-        # PROCESS DATA and SEND IT
-        new_pop = evolvePopulation(pop, fit, MUT_RATE, PICKSIZE, SEL_SIZE)
-        data = pickle.dumps(new_pop)
-        s.send(data)
+    # UNPACK DATA
+    MUT_RATE, PICKSIZE, SEL_SIZE = data_dic[0]
+    fit = data_dic[1]
+    pop = data_dic[2]
 
-        # TODO Implement a check here for when the server sends a shutdown command
-        s.close()
-        print("Data Sent")
-        break
+    # PROCESS DATA and SEND IT
+    new_pop = evolvePopulation(pop, fit, MUT_RATE, PICKSIZE, SEL_SIZE)
+    data = pickle.dumps(new_pop)
+    s.send(data)
 
-    except:
-        print("Attempting Connection")
-        continue
+    # TODO Implement a check here for when the server sends a shutdown command
+    s.close()
+    print("Data Sent")
+    break
+

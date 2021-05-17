@@ -13,7 +13,7 @@ def evolvePopulation(population, popRanked, mutationRate, pickSize, sel_size):
 
 # Socket params
 HOST = socket.gethostname()
-PORT = 1234
+PORT = 9999
 
 while True:
     try:
@@ -22,11 +22,13 @@ while True:
         print("Connection Established!\n")
 
         # RECEIVE DATA
-        data_length = pickle.loads(s.recv(1024))
         data = b""
-        while sys.getsizeof(data) != data_length:
+        while True:
             packet = s.recv(4096)
+            if not packet:
+                break
             data += packet
+
         print("Data Received")
 
         data_dic = pickle.loads(data)

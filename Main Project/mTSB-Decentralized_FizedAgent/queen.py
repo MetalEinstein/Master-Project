@@ -6,7 +6,7 @@ import sys
 CONNECTION_LIST = []
 EXPECTED_CONNECTIONS = 1
 HOST = socket.gethostname()
-PORT = 1234
+PORT = 9998
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
@@ -50,15 +50,12 @@ data_param = [MUT_RATE, PICKSIZE, SEL_SIZE]
 
 data_fit = temp_rank
 data_pop = pop
-
 data_dic = pickle.dumps({0: data_param, 1: data_fit, 2: data_pop})
 
 # Send Data
 for conn, _ in CONNECTION_LIST:
     try:
-        conn.send(pickle.dumps(sys.getsizeof(data_dic)))
         conn.send(data_dic)
-
     except:
         print("Error when sending message!")
 

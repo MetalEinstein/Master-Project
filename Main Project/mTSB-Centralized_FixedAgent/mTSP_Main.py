@@ -17,6 +17,10 @@ BREAKPOINT = 100
 K_AGENTS = 3
 # INITIAL_SELECTION_SIZE = 15
 
+project_title = "crossover"
+title = "dpx_mutation100_test"
+name = "dpx100"
+
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, sel_size, id):
     # pop = 0
@@ -50,7 +54,6 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         progress.append(1 / rankedFitness[0][1])
         # print("Current Distance: " + str(1 / rankedFitness[0][1]) + ",   ", "Generation: " + str(i))
 
-
         for f in range(len(rankedFitness)):
             sum_distance += 1 / rankedFitness[f][1]
         mean_progress.append(sum_distance / len(rankedFitness))
@@ -78,15 +81,13 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     # D = ['\tCurrent Distance: ', str(1 / rankedFitness[0][1]), '\tTime sec: ', str(int((time.time() - start_time))), '\tGeneration: ', str(i), '\n']
     # file.writelines(D)
     # file.close()
-
-    best_indi = rankedFitness[0][0]
-    map_city = city_connect(pop, MAP_SIZE, best_indi, home_city)
-
-
+    
     if (1 / rankedFitness[0][1]) < 3600:
+        best_indi = rankedFitness[0][0]
+        map_city = city_connect(pop, MAP_SIZE, best_indi, home_city)
         cv2.imwrite('C:/Users/Alexander Staal/Desktop/Robotics/Kandidat (msc in robotics)/10. '
-                    'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/Map_connections' +
-                    str("(" + id + ")") + '.png', map_city)
+                    'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/' +
+                    name + str("(" + id + ")") + '.png', map_city)
 #
 # for i in range(10):
 #     start_time = time.time()
@@ -125,23 +126,23 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
 
 sweep_config = {
-    "name": "pos_crossover_test",
+    "name": title,
     "method": 'grid',  # 'random',
     "parameters": {
-        "POP_SIZE": {"values": [50]},
-        "ELITE_SIZE": {"values": [5, 10, 15]},
-        "MUT_RATE": {"values": [0]},
-        "INITIAL_SELECTION_SIZE": {"values": [5, 10, 15]},
+        "POP_SIZE": {"values": [100]},
+        "ELITE_SIZE": {"values": [5]},
+        "MUT_RATE": {"values": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]},
+        "INITIAL_SELECTION_SIZE": {"values": [10]},
         "REPEATS": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
     }
 }
 
-sweep_id = wandb.sweep(sweep_config, project="crossover")
+sweep_id = wandb.sweep(sweep_config, project=project_title)
 
 
 def train():
     id = wandb.util.generate_id()
-    run = wandb.init(id=id, name=("pos" + str('(' + id + ')')))
+    run = wandb.init(id=id, name=(name + str('(' + id + ')')))
     taskList = []
     config = wandb.config
     config.task_number = TASK_NUMBER
@@ -149,8 +150,6 @@ def train():
     config.max_generations = MAX_GENERATIONS
     config.breakpoint = BREAKPOINT
     config.k_agents = K_AGENTS
-    # config.sel_size = INITIAL_SELECTION_SIZE
-    # config.pop_size = POP_SIZE
     start_time = time.time()
     taskList = taskGeneratortesting(taskList)
     geneticAlgorithm(population=taskList,
@@ -163,8 +162,5 @@ def train():
                      sel_size=run.config["INITIAL_SELECTION_SIZE"],
                      id=id)
     wandb.log({"Total time (sec)": int((time.time() - start_time))})
-
-    # run.finish()
-
 
 wandb.agent(sweep_id, function=train)

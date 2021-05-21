@@ -7,19 +7,19 @@ import time
 import wandb
 
 # taskList = []
-TASK_NUMBER = 25
-MAP_SIZE = 500
+TASK_NUMBER = 35
+MAP_SIZE = 200
 # POP_SIZE = 50  # skiftes
 # ELITE_SIZE = 5 #skiftes
 # MUT_RATE = 0.20 # skiftes
 MAX_GENERATIONS = 500
-BREAKPOINT = 100
+BREAKPOINT = 10
 K_AGENTS = 3
 # INITIAL_SELECTION_SIZE = 15
 
-project_title = "crossover"
-title = "dpx_mutation100_test"
-name = "dpx100"
+project_title = "testing"
+title = "dpx_sim_test"
+name = "dpxsim"
 
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, sel_size, id):
@@ -84,7 +84,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     
     if (1 / rankedFitness[0][1]) < 3600:
         best_indi = rankedFitness[0][0]
-        map_city = city_connect(pop, MAP_SIZE, best_indi, home_city)
+        map_city = city_connect(pop, MAP_SIZE, best_indi, home_city, rankedFitness[0][1])
         cv2.imwrite('C:/Users/Alexander Staal/Desktop/Robotics/Kandidat (msc in robotics)/10. '
                     'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/' +
                     name + str("(" + id + ")") + '.png', map_city)
@@ -129,9 +129,9 @@ sweep_config = {
     "name": title,
     "method": 'grid',  # 'random',
     "parameters": {
-        "POP_SIZE": {"values": [100]},
+        "POP_SIZE": {"values": [50]},
         "ELITE_SIZE": {"values": [5]},
-        "MUT_RATE": {"values": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]},
+        "MUT_RATE": {"values": [1]},
         "INITIAL_SELECTION_SIZE": {"values": [10]},
         "REPEATS": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
     }

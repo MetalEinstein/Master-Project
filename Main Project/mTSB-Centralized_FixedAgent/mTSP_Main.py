@@ -8,18 +8,18 @@ import wandb
 
 # taskList = []
 TASK_NUMBER = 35
-MAP_SIZE = 200
+MAP_SIZE = 500
 # POP_SIZE = 50  # skiftes
 # ELITE_SIZE = 5 #skiftes
 # MUT_RATE = 0.20 # skiftes
 MAX_GENERATIONS = 500
-BREAKPOINT = 10
+BREAKPOINT = 100
 K_AGENTS = 3
 # INITIAL_SELECTION_SIZE = 15
 
 project_title = "testing"
-title = "dpx_sim_test"
-name = "dpxsim"
+title = "population_deviation_test"
+name = "popdev"
 
 
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, breakpoint, numAgents, sel_size, id):
@@ -47,7 +47,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
         progress_past = 1 / rankRoutes(pop, home_city)[0][1]
         rankedFitness = rankRoutes(pop, home_city)
-        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, sel_size)
+        pop = evolvePopulation(pop, rankedFitness, eliteSize, mutationRate, sel_size, generations)
         progress_future = 1 / rankRoutes(pop, home_city)[0][1]
         generation_diff.append(abs(progress_past - progress_future))
 
@@ -85,8 +85,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     if (1 / rankedFitness[0][1]) < 3600:
         best_indi = rankedFitness[0][0]
         map_city = city_connect(pop, MAP_SIZE, best_indi, home_city, rankedFitness[0][1])
-        cv2.imwrite('C:/Users/Alexander Staal/Desktop/Robotics/Kandidat (msc in robotics)/10. '
-                    'semester/Master-Project/Main Project/mTSB-Centralized_FixedAgent/Map_connections/' +
+        cv2.imwrite('/Users/Ditte/Desktop/Pictures' +
                     name + str("(" + id + ")") + '.png', map_city)
 #
 # for i in range(10):
@@ -129,10 +128,10 @@ sweep_config = {
     "name": title,
     "method": 'grid',  # 'random',
     "parameters": {
-        "POP_SIZE": {"values": [50]},
-        "ELITE_SIZE": {"values": [5]},
-        "MUT_RATE": {"values": [1]},
-        "INITIAL_SELECTION_SIZE": {"values": [10]},
+        "POP_SIZE": {"values": [250, 500, 750, 1000]},
+        "ELITE_SIZE": {"values": [15]},
+        "MUT_RATE": {"values": [0.9]},
+        "INITIAL_SELECTION_SIZE": {"values": [50, 100, 150, 200]},
         "REPEATS": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
     }
 }

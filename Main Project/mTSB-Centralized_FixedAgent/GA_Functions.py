@@ -20,15 +20,15 @@ def taskGenerator(taskList: List[object], taskNum: int, mapSize: int):
 
 def taskGeneratortesting(taskList: List[object]):
     #list = [(67,423), (381,127), (247,224), (325,394), (46,14), (417,216), (381,1), (222,360), (114,472), (450,15), (12,270), (469,190), (108,211), (14,110), (218,247), (116,115), (109,229), (144,10), (418,278), (321,92), (496,429), (60,166), (360,355), (468,211), (415,335)]
-    # cityx = [67, 381, 247, 325, 46, 417, 381, 222, 114, 450, 12, 469, 108, 14, 218, 116, 109, 144, 418, 321, 496, 60, 360, 468, 415]
-    # cityy = [423, 127, 224, 394, 14, 216, 1, 360, 472, 15, 270, 190, 211, 110, 247, 115, 229, 10, 278, 92, 429, 166, 355, 211, 335]
+    cityx = [67, 381, 247, 325, 46, 417, 381, 222, 114, 450, 12, 469, 108, 14, 218, 116, 109, 144, 418, 321, 496, 60, 360, 468, 415]
+    cityy = [423, 127, 224, 394, 14, 216, 1, 360, 472, 15, 270, 190, 211, 110, 247, 115, 229, 10, 278, 92, 429, 166, 355, 211, 335]
     # cityx = [43, 25, 106, 25, 119, 119, 86, 86, 5, 56, 106, 100, 76, 149, 76, 124, 76, 122, 76, 148, 76]
     # cityy = [2, 22, 14, 22, 26, 16, 17, 17, 48, 53, 20, 55, 5, 57, 5, 29, 5, 11, 5, 3, 5]
-    city_posx = [43, 25, 106, 119, 119, 86,  5, 56, 106, 100, 76, 149, 124, 122, 148, 43, 80, 80, 51, 25,  5, 51, 56, 110, 106, 86, 75, 110, 118, 132, 110, 121, 121, 121, 100]
-    city_posy = [ 2, 22,  14,  26,  16, 17, 48, 53,  20,  55,  5,  57,  29,  11,   3, 11, 11, 26, 26, 26, 26, 45, 45,  11,  11, 11, 11,  21,  11,   3,  30,  30,  26,  57,  57]
+    #city_posx = [43, 25, 106, 119, 119, 86,  5, 56, 106, 100, 76, 149, 124, 122, 148, 43, 80, 80, 51, 25,  5, 51, 56, 110, 106, 86, 75, 110, 118, 132, 110, 121, 121, 121, 100]
+    #city_posy = [ 2, 22,  14,  26,  16, 17, 48, 53,  20,  55,  5,  57,  29,  11,   3, 11, 11, 26, 26, 26, 26, 45, 45,  11,  11, 11, 11,  21,  11,   3,  30,  30,  26,  57,  57]
 
-    for i in range(len(city_posx)):
-        taskList.append(City(x=city_posx[i], y=city_posy[i]))
+    for i in range(len(cityx)):
+        taskList.append(City(x=cityx[i], y=cityy[i]))
 
     return taskList
 
@@ -76,8 +76,8 @@ def rankRoutes(population, homeCity):
     return sorted(fitnessResults.items(), key=operator.itemgetter(1), reverse=True)  # Returns sorted list
 
 
-def evolvePopulation(population, popRanked, eliteSize, mutationRate, sel_size):
-        matingPool = Selection(population, popRanked, eliteSize, sel_size).matingPool()
+def evolvePopulation(population, popRanked, eliteSize, mutationRate, sel_size, generation):
+        matingPool = Selection(population, popRanked, eliteSize, sel_size, generation).matingPool()
         newCrossoverPopulation = Crossover(matingPool, eliteSize).evolve()
         newPopulation = Mutation(newCrossoverPopulation, mutationRate).mutate()
 
@@ -90,7 +90,7 @@ def city_connect(final_population, size, best_index, home_city, best_dist):
     color_dic = {}
 
     txt = 'Distance = %2.f' % (1/best_dist)
-    y = 57+50
+    y = 100+50
 
     # Add the home city to the task list of each salesmen
     best_individual = final_population[best_index]

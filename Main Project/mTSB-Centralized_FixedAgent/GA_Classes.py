@@ -68,11 +68,12 @@ class Fitness:
 
 
 class Selection:
-    def __init__(self, population, popRanked, eliteSize, selectionSize):
+    def __init__(self, population, popRanked, eliteSize, selectionSize, generation):
         self.popRanked = popRanked
         self.eliteSize = eliteSize
         self.population = population
         self.selectionSize = selectionSize
+        self.generation = generation
 
         # Selects the best fitting individual in a selected subset of a chosen size
 
@@ -84,26 +85,53 @@ class Selection:
         for i in range(0, self.eliteSize):
             selectionResults.append(self.popRanked[i][0])
 
-        # Choose the remaining individuals to the mating pool through tournament selection
-        for i in range(0, len(self.popRanked) - self.eliteSize):
-            temp_subPool = random.sample(selectionPool, self.selectionSize)
+        if self.generation == 0:
+            for i in range(0, len(self.popRanked) - self.eliteSize):
+                temp_subPool = random.sample(selectionPool, self.selectionSize)
 
-            max_index = temp_subPool[0][0]
-            last_fitness = temp_subPool[0][1]
-            for index, fitness in temp_subPool:
-                if last_fitness < fitness:
-                    max_index = index
-                last_fitness = fitness
-            selectionResults.append(max_index)
+                max_index = temp_subPool[0][0]
+                last_fitness = temp_subPool[0][1]
+                for index, fitness in temp_subPool:
+                    if last_fitness < fitness:
+                        max_index = index
+                    last_fitness = fitness
+                selectionResults.append(max_index)
+        else:
+            # Choose the remaining individuals to the matingpool through tournament selection
+            for i in range(0, len(self.popRanked) - self.eliteSize):
+                temp_subPool = random.sample(selectionPool, 5)
+
+                max_index = temp_subPool[0][0]
+                last_fitness = temp_subPool[0][1]
+                for index, fitness in temp_subPool:
+                    if last_fitness < fitness:
+                        max_index = index
+                    last_fitness = fitness
+                selectionResults.append(max_index)
 
         return selectionResults
 
+    # def matingPool(self):
+    #     matingpool = []
+    #     selectionResults = self.tournament_selection()
+    #     for i in range(0, len(selectionResults)):
+    #         index = selectionResults[i]
+    #         matingpool.append(self.population[index])
+    #     return matingpool
+
+    # Creates a list of the best suited routes
     def matingPool(self):
         matingpool = []
         selectionResults = self.tournament_selection()
-        for i in range(0, len(selectionResults)):
-            index = selectionResults[i]
-            matingpool.append(self.population[index])
+        if self.generation == 0:
+            for i in range(0, len(selectionResults)):
+                index = selectionResults[i]
+                matingpool.append(self.population[index])
+        else:
+            #for i in range(0, len(selectionResults)):
+            for i in range(0, 50):
+                index = selectionResults[i]
+                matingpool.append(self.population[index])
         return matingpool
 
 

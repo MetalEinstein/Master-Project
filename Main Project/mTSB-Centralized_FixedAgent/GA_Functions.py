@@ -137,6 +137,7 @@ def city_connect(final_population, size, best_index, home_city):
 
     return map_city
 
+
 def perform_k_means(data, num_salesmen):
     sse = []
     k_rng = range(1, num_salesmen+1)

@@ -1,11 +1,8 @@
-import random, operator
-import numpy as np
-import cv2
-from typing import *
 from GA_Classes import *
 from sklearn.cluster import KMeans
 import kneed
-from matplotlib import pyplot as plt
+import cv2
+
 
 def taskGenerator(taskList: List[object], taskNum: int, mapSize: int):
     # We create a set number of city's each of which is positioned randomly
@@ -88,14 +85,6 @@ def rankRoutes(population, homeCity):
     # key = operator.itemgetter(1) -> Will create a sorted list according to the '1' element, 0 being the population index
     # and 1 being the fitness score. Thus we sort it from highest to lowest score
     return sorted(fitnessResults.items(), key=operator.itemgetter(1), reverse=True)  # Returns sorted list
-
-
-def evolvePopulation(population, popRanked, eliteSize, mutationRate, sel_size):
-    matingPool = Selection(population, popRanked, eliteSize, sel_size).matingPool()
-    newCrossoverPopulation = Crossover(matingPool, eliteSize).evolve()
-    newPopulation = Mutation(newCrossoverPopulation, mutationRate).mutate()
-
-    return newPopulation
 
 
 def city_connect(final_population, size, best_index, home_city):

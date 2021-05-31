@@ -3,9 +3,11 @@ from typing import *
 
 
 class City:
-    def __init__(self, x, y):
+    def __init__(self, x, y, x1, y1):
         self.x = x
         self.y = y
+        self.x1 = x1
+        self.y1 = y1
 
     def distance(self, city):
         xDis = abs(self.x - city.x)
@@ -14,7 +16,7 @@ class City:
         return distance
 
     def __repr__(self):
-        return "(" + str(self.x) + "," + str(self.y) + ")"
+        return "(" + str(self.x) + "," + str(self.y) + "," + str(self.x1) + "," + str(self.y1) + ")"
 
 
 class Fitness:

@@ -3,11 +3,12 @@ import cv2
 import matplotlib.pyplot as plt
 import time
 
-# BEST SCORE SO FAR = 3401 IN 199 GENERATIONS
+# BEST SCORE SO FAR = 2975 IN 199 GENERATIONS
+# BEST SCORE SO FAR = 554 IN 428 GENERATIONS
 
 taskList = []
-TASK_NUMBER = 25
-MAP_SIZE = 500
+TASK_NUMBER = 35
+MAP_SIZE = 200
 POP_SIZE = 50
 ELITE_SIZE = 5
 MUT_RATE = 0.90
@@ -34,6 +35,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         sum_distance += 1/temp_rank[i][1]
     mean_progress.append(sum_distance/len(temp_rank))
 
+    bestdist = 0
     p_counter = 0
     for i in range(0, generations):
         sum_distance = 0
@@ -46,7 +48,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         generation_diff.append(abs(progress_past - progress_future))
 
         progress.append(1 / rankedFitness[0][1])
-        print("Current Distance: " + str(1 / rankedFitness[0][1]) + ",   ", "Generation: " + str(i))
+        print(p_counter, "\tCurrent Distance:\t" + str(1 / rankedFitness[0][1]), ",\tGeneration: " + str(i))
 
         for f in range(len(rankedFitness)):
             sum_distance += 1/rankedFitness[f][1]
@@ -54,8 +56,10 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
         # We check the progress over a set number of generations. If progress = 0 we stop the algorithm
         # Might be an alternative just to use breakpoint instead of iteration for a set number of generations
-        if p_counter == breakpoint:
+        if bestdist is not (rankedFitness[0][0]):
+            bestdist = (rankedFitness[0][0])
             p_counter = 0
+        elif p_counter >= BREAKPOINT:
             total_diff = sum(generation_diff)
             generation_diff.clear()
 
@@ -63,7 +67,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
                 break
 
     best_indi = rankedFitness[0][0]
-    map_city = city_connect(pop, MAP_SIZE, best_indi, home_city)
+    map_city = city_connect(pop, MAP_SIZE, best_indi, home_city, rankedFitness[0][1])
 
     best_indi = pop[best_indi]
     print("agents: ")

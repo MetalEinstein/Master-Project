@@ -1,8 +1,51 @@
-import matplotlib.pyplot as plt, cv2
-import numpy as np
-from my_classes import City, Fitness
+import cv2
+# import numpy as np
+from my_classes import City
 from my_functions import *
 import random
+
+Task_number = 5
+agents = 3
+
+
+def city_connection(Task_number, agents):
+    t1 = []
+    t2 = []
+    for h in range(agents):
+        t1.append([])
+        for i in range(Task_number):
+            t1[h].append([])
+            for j in range(0, 4):
+                t1[h][i].append(random.randint(0, 500))
+            t1[h][i] = tuple(t1[h][i])
+
+    t2 = copy.deepcopy(t1)
+    random.shuffle(t2)
+    for i in range(agents):
+        random.shuffle(t2[i])
+    return t1, t2
+
+list_con = [(0, 0), (1, 2), (1, 3), (4, 5), (5, 6), (7, 8), (9, 14), (10, 14), (11, 14), (12, 14), (13, 14)]
+def taskgenerator(cityList, list_con):
+    cityx = [43, 25, 106, 119, 119, 86, 5, 56, 106, 100, 149, 124, 122, 148, 76]
+    cityy = [2, 22, 14, 26, 16, 17, 48, 53, 20, 55, 57, 29, 11, 3, 5]
+
+    city_list = []
+
+    # for i in range(len(cityx)-1):
+    #     cityList.append(City(x=cityx[i], y=cityy[i], x1=cityx[i+1], y1=cityy[i+1]))
+
+    for i in range(len(list_con)):
+        list = []
+        for j in range(2):
+            list.append(cityx[list_con[i][j]])
+            list.append(cityy[list_con[i][j]])
+        cityList.append(City(x=list[0], y=list[1], x1=list[2], y1=list[3]))
+        # city_list.append(list)
+        # city_list[i] = tuple(city_list[i])
+    print(list_con)
+    return cityList
+
 
 def city_setup(city_list, num, size):
     # We create a set number of city's each of which is positioned randomly
@@ -16,7 +59,8 @@ def city_setup(city_list, num, size):
 
     return cityList
 
-# def city_matrix(num): # makes the city connections with ones and zeroes
+
+# def city_matrix(num):  # makes the city connections
 #     for i in range(0, num):
 #         a = []
 #         for j in range(0, num):
@@ -28,67 +72,90 @@ def city_setup(city_list, num, size):
 #         matrixmap.append(a)
 #     print(np.matrix(matrixmap))
 
-def city_matrix(num): # makes the city connections with distances
-    for i in range(0, num):
-        a = []
-        for j in range(0, num):
-                x = cityList[i].x - cityList[j].x
-                y = cityList[i].y - cityList[j].y
-                distance = np.sqrt((x ** 2) + (y ** 2))
-                a.append(int(distance))
-
-        matrixmap.append(a)
-    print(np.matrix(matrixmap))
 
 # #           0  1  2  3  4  5
-# matrixmap = [[1, 1, 1, 1, 1, 1],    # 0
-#              [1, 0, 1, 1, 1, 1],    # 1
-#              [1, 1, 0, 1, 1, 1],    # 2
-#              [1, 1, 1, 0, 1, 1],    # 3
-#              [1, 1, 1, 1, 0, 1],    # 4
-#              [1, 1, 1, 1, 1, 0],    # 5
+# matrixmap = [[0, 0, 0, 1, 0, 0],    # 0
+#              [1, 0, 0, 0, 0, 0],    # 1
+#              [0, 0, 0, 0, 0, 0],    # 2
+#              [1, 1, 0, 0, 0, 0],    # 3
+#              [1, 0, 0, 0, 0, 1],    # 4
+#              [0, 0, 0, 0, 1, 0],    # 5
 # ]
 
 
-matrixmap = []
+
+# def connections(list_con, cityList):
+#     city_list = []
+#     for i in range(len(list_con)):
+#         list = []
+#         for j in range(2):
+#             list.append(cityList[list_con[i][j]].x)
+#             list.append(cityList[list_con[i][j]].y)
+#         city_list.append(list)
+#         city_list[i] = tuple(city_list[i])
+#     return city_list
+
+# matrixmap = []
 cityList = []
-num_city = 6
-map_size = 500
+num_city = 15
+map_size = 200
 
-xs = []
-ys = []
+# cityList = city_setup(cityList, num_city, map_size)
+cityList = taskgenerator(cityList, list_con)
+# cityList2 = connections(list_con, cityList)
 
+print(cityList)
+# print(cityList2[0][1])
+# city_matrix(num_city)
+# xs = []
+# ys = []
+# for i in range(0, num_city):
+#     xs.append(cityList[i].x)
+#     ys.append(cityList[i].y)
+# print(f"x = {xs}, y = {ys}")
 
-cityList = city_setup(cityList, num_city, map_size)
-for i in range(0, num_city):
-    xs.append(cityList[i].x)
-    ys.append(cityList[i].y)
-print(f"x = {xs}, y = {ys}")
-city_matrix(num_city)
-
-
-
-
-
-
-
-
-map_city = np.ones((map_size, map_size, 3), np.uint8)
-map_city.fill(255)
-
-# for i, node in enumerate(matrixmap):
-#     a = []
-#     for index, edge in enumerate(node):
-#         if edge != 0:
-#             x = xs[i] - xs[index]
-#             y = ys[i] - ys[index]
-#             distance = np.sqrt((x ** 2) + (y ** 2))
-#             print(str(i), int(distance), index, sep=' -> ')
-#             matrixmap[i][index] = int(distance)
+# def matrixmap():
+#     map_city = np.ones((map_size, map_size, 3), np.uint8)
+#     map_city.fill(255)
+#
+#     for i, node in enumerate(matrixmap):
+#         for index, edge in enumerate(node):
+#             if edge != 0:
+#                 x = xs[i] - xs[index]
+#                 y = ys[i] - ys[index]
+#                 distance = np.sqrt((x ** 2) + (y ** 2))
+#                 # print(str(i), int(distance), index, sep=' -> ')
+#                 print(str(i), index, sep=' , ')
+#                 matrixmap[i][index] = int(distance)
+#                 cv2.line(map_city, (xs[i], ys[i]), (xs[index], ys[index]), (255, 0, 0), thickness=1, lineType=8)
 #             cv2.circle(map_city, (xs[i], ys[i]), 3, 0, -1)  # Visualizing the position of city's on map
-#             cv2.line(map_city, (xs[i], ys[i]), (xs[index], ys[index]), (255, 0, 0), thickness=1, lineType=8)
-# print(np.matrix(matrixmap))
-# cv2.imshow('City Map', map_city)
-# cv2.waitKey()
+#     map_city = cv2.resize(map_city, (2 * map_size, 2 * map_size), interpolation=cv2.INTER_CUBIC)
+#     print(np.matrix(matrixmap))
+#     cv2.imshow('hej', map_city)
+#     cv2.waitKey()
+
+def dependmap(cityList, list_con):
+    scale = 4
+    map_city = np.ones(((map_size*2), map_size*scale, 3), np.uint8)
+    map_city.fill(255)
+
+    txt = 'Distance ='
+    for i in range(len(cityList)):
+        cv2.circle(map_city, (cityList[i].x*scale, cityList[i].y*scale), 3, 0, -1)  # Visualizing the position of city's on map
+        cv2.circle(map_city, (cityList[i].x1 * scale, cityList[i].y1 * scale), 3, 0, -1)
+
+    for i in range(len(list_con)):
+        cv2.line(map_city, (cityList[i].x*scale, cityList[i].y*scale), (cityList[i].x1*scale, cityList[i].y1*scale), (0, 0, 255), thickness=1, lineType=cv2.LINE_AA)
+        if i < len(cityList)-1:
+            cv2.line(map_city, (cityList[i].x1*scale, cityList[i].y1*scale), (cityList[i+1].x*scale, cityList[i+1].y*scale), (200, 200, 200),
+                 thickness=1, lineType=cv2.LINE_AA)
+    cv2.putText(map_city, txt, org=(0, map_size*2), fontFace=cv2.FONT_ITALIC, fontScale=0.3, color=(0, 0, 0), thickness=1,
+                lineType=8)
+    # map_city = cv2.resize(map_city, (2 * map_size, 2 * map_size), interpolation=cv2.INTER_CUBIC)
+    #
+    # print(np.matrix(matrixmap))
+    cv2.imshow('Dependent map', map_city)
+    cv2.waitKey()
 
 
+dependmap(cityList, list_con)

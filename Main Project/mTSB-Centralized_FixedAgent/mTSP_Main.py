@@ -19,8 +19,8 @@ K_AGENTS = 3
 
 
 project_title = "testing"
-title = "parameter_test"
-name = "param"
+title = "proportional_selection_testing"
+name = "pst"
 
 # taskList, K_AGENTS = taskGeneratortesting(taskList)
 
@@ -115,10 +115,10 @@ sweep_config = {
     "method": 'grid',  # 'random',
     "parameters": {
         "POP_SIZE": {"values": [50]},
-        "ELITE_SIZE": {"values": [5, 10, 15]},
-        "MUT_RATE": {"values": [0.9, 1]},
-        "INITIAL_SELECTION_SIZE": {"values": [5, 10, 15]},
-        "REPEATS": {"values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
+        "ELITE_SIZE": {"values": [5]},
+        "MUT_RATE": {"values": [0.9]},
+        "INITIAL_SELECTION_SIZE": {"values": [15]},
+        "REPEATS": {"values": [1, 2, 3, 4, 5]},
     }
 }
 

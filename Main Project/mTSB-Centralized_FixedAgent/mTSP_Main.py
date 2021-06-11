@@ -16,6 +16,7 @@ BREAKPOINT = 100
 INITIAL_SELECTION_SIZE = 15
 
 taskList, K_AGENTS = taskGeneratortesting(taskList)
+K_AGENTS = 3
 #taskList, K_AGENTS = taskGenerator(taskList, TASK_NUMBER, MAP_SIZE)
 
 
@@ -34,6 +35,7 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
         sum_distance += 1/temp_rank[i][1]
     mean_progress.append(sum_distance/len(temp_rank))
 
+    bestdist = 0
     p_counter = 0
     for i in range(0, generations):
         sum_distance = 0
@@ -54,11 +56,12 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
 
         # We check the progress over a set number of generations. If progress = 0 we stop the algorithm
         # Might be an alternative just to use breakpoint instead of iteration for a set number of generations
-        if p_counter == breakpoint:
+        if bestdist is not (rankedFitness[0][0]):
+            bestdist = (rankedFitness[0][0])
             p_counter = 0
+        elif p_counter >= BREAKPOINT:
             total_diff = sum(generation_diff)
             generation_diff.clear()
-
             if total_diff == 0:
                 break
 

@@ -1,0 +1,5 @@
+
+*.pyc
+/pictures/
+/venv/
+/Main Project/mTSB-Centralized_FixedAgent/wandb/

@@ -1,0 +1,20 @@
+
+Main Project/mTSB-Centralized_FixedAgent/__pycache__/
+
+*.yaml
+
+*.log
+
+*.json
+
+*.wandb
+
+*.txt
+
+*.png
+
+*.pyc
+
+venv/Lib/site-packages/_distutils_hack/
+/venv/
+/pictures/

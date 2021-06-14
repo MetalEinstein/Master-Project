@@ -9,7 +9,7 @@ The output is a nested list containing routes for each AGV.
 
 The algorithm is initialized by running: Main Project/mTSB-Centralized_FixedAgent/mTSP_Main.py
 
-The plot below shows an example the created paths for three AGVs, that have to complete 25 tasks combined.
+The plot below shows an example the created paths for three AGVs, that have to complete 25 tasks combined. The routes are optimized based on the minimization of the total distance travelled.
 
 ![plot](./graphics/param(1dydflv8).png)
 

@@ -2,10 +2,6 @@ import socket
 import threading
 from queue import Queue
 
-MAX_HEADER_SIZE = 10  # Max message size
-NUMBER_OF_THREADS = 2  # We want to do two things simultaneously (Listen for new connections and maintain and communicate with existing ones)
-JOB_NUMBER = [1, 2]  # Job id's for threads
-
 queue = Queue()
 all_connections = []
 all_address = []
@@ -53,7 +49,7 @@ def bind_socket():
 
 # --------- THREAD 1 -------------
 # Handling connections from multiple clients and saving the connections to a list
-# Closing previous connections when server.py file is restarted '
+# Closing previous connections when server.py file is restarted
 def accepting_connections():
 
     # Closing previous connections

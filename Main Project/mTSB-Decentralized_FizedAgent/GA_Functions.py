@@ -87,13 +87,12 @@ def rankRoutes(population, homeCity):
     return sorted(fitnessResults.items(), key=operator.itemgetter(1), reverse=True)  # Returns sorted list
 
 
-def city_connect(final_population, size, best_index, home_city):
+def city_connect(best_individual, size, home_city):
     map_city = np.ones((size, size, 3), np.uint8)
     map_city.fill(255)
     color_dic = {}
 
     # Add the home city to the task list of each salesmen
-    best_individual = final_population[best_index]
     for genome_index in range(len(best_individual)):
         best_individual[genome_index].insert(0, home_city)
 

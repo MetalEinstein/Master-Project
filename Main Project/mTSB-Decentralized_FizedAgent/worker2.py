@@ -1,12 +1,8 @@
 from GA_Functions import *
-import cv2
-from Socket_Setup import *
-import matplotlib.pyplot as plt
-import pickle
+import socket
 import time
+import pickle
 
-
-# GA Parameters
 taskList = []
 TASK_NUMBER = 25
 MAP_SIZE = 500
@@ -17,8 +13,22 @@ MAX_GENERATIONS = 500
 BREAKPOINT = 100
 INITIAL_SELECTION_SIZE = 5
 
-# Socket Parameters
-NUM_WORKERS = 2
+# Socket setup
+MAX_HEADER_SIZE = 10
+
+soc = socket.socket()
+host = socket.gethostname()  # Server IP
+port = 9999  # Should be the same port number as Server
+
+while True:
+    try:
+        soc.connect((host, port))
+        print("Connection Established")
+        break
+
+    except:
+        print("Waiting for connection...")
+        time.sleep(1)
 
 
 def evolvePopulation(population, popRanked, eliteSize, mutationRate, sel_size):
@@ -79,57 +89,29 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations, 
     return [pop[rankedFitness[0][0]], 1/rankedFitness[0][1], home_city]
 
 
-start_time = time.time()
+while True:
+    data = soc.recv(1024)
 
-# Do initial clustering
+    # If the server is just pinging client to check connection send back short response
+    check = data.decode("utf-8")
+    if check == "0":
+        soc.send(str.encode("1"))
+        break
+
+
 taskList, K_AGENTS = taskGeneratortesting(taskList)
 K_AGENTS = 3
 
+best_individual = geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_RATE,
+                 generations=MAX_GENERATIONS, breakpoint=BREAKPOINT, numAgents=K_AGENTS, sel_size=INITIAL_SELECTION_SIZE)
 
-# Connect to active clients
-create_socket()
-bind_socket()
-accepting_connections(NUM_WORKERS)
+# Send the best individual to the server
+# TODO Add message size to data for comparison on the server side
+#data = str(best_individual)
+#data = f'{len(data):<{MAX_HEADER_SIZE}}' + data
+#soc.send(str.encode(data))
+data = pickle.dumps(best_individual)
+soc.send(data)
 
-# Start active clients
-for conn in all_connections:
-    conn.send(str.encode("0"))
-    conn.recv(1024)
 
-# Run GA
-bestList = []
-bestList.append(geneticAlgorithm(population=taskList, popSize=POP_SIZE, eliteSize=ELITE_SIZE, mutationRate=MUT_RATE,
-                 generations=MAX_GENERATIONS, breakpoint=BREAKPOINT, numAgents=K_AGENTS, sel_size=INITIAL_SELECTION_SIZE))
-
-# Collect the best individuals from each agent in the network
-# TODO Compare to message size doing data retrieval to load messages > 4096 bits
-for conn in all_connections:
-    #full_msg = ''
-    while True:
-        data = conn.recv(4096)
-        #msglen = int(data[:MAX_HEADER_SIZE])
-
-        """
-        full_msg += data.decode("utf-8")
-        if len(full_msg) - MAX_HEADER_SIZE == msglen:
-            bestList.append(eval(full_msg[MAX_HEADER_SIZE:]))
-            conn.close()
-            break
-        """
-        bestList.append(pickle.loads(data))
-        conn.close()
-        break
-
-# Find the best solution among them
-bestList = sorted(bestList, key=operator.itemgetter(1), reverse=False)
-
-for i, dist in enumerate(bestList):
-    print(f"ID: {i},  Distance: {bestList[i][1]}")
-
-# Draw the best solution
-img = city_connect(bestList[0][0], MAP_SIZE, bestList[0][2])
-cv2.imshow("Final", img)
-cv2.waitKey()
-
-print("--- %s seconds ---" % int((time.time() - start_time)))
 

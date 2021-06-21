@@ -201,11 +201,10 @@ class Crossover:
 
         # Create the child using the above blueprint
         child = []
-        pre_index = 0
         for genome in agent_blueprint:
             length = len(genome)
-            child.append(extended_frags[pre_index:pre_index + length])
-            pre_index = length + pre_index
+            child.append(extended_frags[0:length])
+            del extended_frags[0:length]
 
         return child
 
